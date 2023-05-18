@@ -1,4 +1,4 @@
-name: template_nextflow_workflow
+name: feature_based_molecular_networking_workflow
 displayname: STUFF
 Views:
 -   name: Summary List
