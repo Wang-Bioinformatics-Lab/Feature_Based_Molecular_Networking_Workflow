@@ -4,8 +4,28 @@ nextflow.enable.dsl=2
 // Define the input channels with default values
 params.featurefindingtool = "MZMINE"
 
-params.inputfeatures = "./data/MZmine-GNPS_AG_test_featuretable.csv"
-params.inputspectra = "data/inputSpectra"
+params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
+params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"
+
+// Libraries
+params.input_libraries = "data/library"
+
+// Parameters
+params.min_cluster_size = "2"
+
+params.pm_tolerance = "2.0"
+params.fragment_tolerance = "0.5"
+
+// Filtereing
+params.min_peak_intensity = "0.0"
+
+// Molecular Networking Options
+params.similarity = "gnps"
+
+params.parallelism = 24
+params.networking_min_matched_peaks = 6
+params.networking_min_cosine = 0.7
+params.networking_max_shift = 1000
 
 // Define the paths to the required YAML files
 params.OMETALINKING_YAML = "flow_filelinking.yaml"
@@ -14,10 +34,8 @@ params.OMETAPARAM_YAML = "job_parameters.yaml"
 // Set the path to the tool folder
 TOOL_FOLDER = "$baseDir/bin"
 
+
 // Define the process that will reformat the quantification table
-
-
-// This process will reformat the input 
 process quantification_table_reformatted {
 
     publishDir "./nf_output", mode: 'copy'
@@ -34,7 +52,7 @@ process quantification_table_reformatted {
 
     script:
     """
-    python $TOOL_FOLDER/reformat_quantification.py \
+    python $TOOL_FOLDER/scripts/reformat_quantification.py \
     $params.featurefindingtool \
     $input_features \
     featuretable_reformated.csv \
@@ -60,7 +78,7 @@ process filter_spectra{
 
     script:
     """
-    python $TOOL_FOLDER/filter_spectra.py \
+    python $TOOL_FOLDER/scripts/filter_spectra.py \
     --FILTER_PRECURSOR_WINDOW 0 \
     --WINDOW_FILTER 0 \
     $_reformatted_spectra_ch \
@@ -70,129 +88,171 @@ process filter_spectra{
 }
 
 
-process prep_molecular_networking_parameters{
-
-    publishDir "./nf_output", mode: 'copy'
-
-    conda "$TOOL_FOLDER/conda_env.yml"
-
-    input:
-    path spectra_filtered_ch 
-
-    output:
-    path 'networking_parameters_folder/*'
-
-    script:
-    """
-    mkdir networking_parameters_folder
-
-    python $TOOL_FOLDER/prep_molecular_networking_parameters.py \
-    $spectra_filtered_ch \
-    networking_parameters_folder \
-    --parallelism 5 \
-    --MIN_MATCHED_PEAKS 2 \
-    --ion_tolerance 0.1 \
-    --pm_tolerance 0.1 \
-    --PAIRS_MIN_COSINE 0.5 \
-    --MAX_SHIFT 0.1
-    """
-}
-
-
-process molecular_networking_parallel_step {
-    publishDir "./nf_output", mode: 'copy'
+// Molecular Networking
+process networkingGNPSPrepParams {
+    publishDir "./nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
     input:
-    each path(networking_parameters)
-    path(spectra_mgf)
+    file spectrum_file
 
     output:
-    path '*.aligns'
+    file "params/*"
 
-    script:
     """
-    $TOOL_FOLDER/main_execmodule \
-    ExecMolecularParallelPairs \
-    $networking_parameters \
-    -ccms_output_aligns ${networking_parameters}.aligns \
-    -ccms_INPUT_SPECTRA_MS2 $spectra_mgf
+    mkdir params
+    python $TOOL_FOLDER/scripts/prep_molecular_networking_parameters.py \
+        "$spectrum_file" \
+        "params" \
+        --parallelism "$params.parallelism" \
+        --min_matched_peaks "$params.networking_min_matched_peaks" \
+        --ms2_tolerance "$params.fragment_tolerance" \
+        --pm_tolerance "$params.pm_tolerance" \
+        --min_cosine "$params.networking_min_cosine" \
+        --max_shift "$params.networking_max_shift"
     """
 }
 
-process merge_networking_results {
-    cache false 
-
-    publishDir "./nf_output", mode: 'copy'
+process calculatePairs {
+    publishDir "./nf_output/temp_pairs", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
     input:
-    file "aligns/*"
+    file spectrum_file
+    each file(params_file)
 
     output:
-    path "merged_alignments.tsv"
+    file "*_aligns.tsv" optional true
 
-    script:
     """
-    python $TOOL_FOLDER/merge_tsv_files_efficient.py \
-    aligns \
-    merged_alignments.tsv
+    $TOOL_FOLDER/binaries/main_execmodule \
+        ExecMolecularParallelPairs \
+        "$params_file" \
+        -ccms_INPUT_SPECTRA_MS2 $spectrum_file \
+        -ccms_output_aligns ${params_file}_aligns.tsv
     """
 }
 
-
-process filter_networking_edges{
-
-    publishDir "./nf_output", mode: 'copy'
+// Filtering the network
+process filterNetwork {
+    publishDir "./nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
-
     input:
-    path networking_pairs_results_file_ch
+    file input_pairs
 
     output:
-    path 'networking_pairs_results_file_filtered.tsv' 
-    path 'networkedges_legacy_output.tsv'
+    file "filtered_pairs.tsv"
 
-
-    script:
     """
-    python $TOOL_FOLDER/filter_networking_edges.py \
-    $networking_pairs_results_file_ch \
-    networking_pairs_results_file_filtered.tsv \
-    networkedges_legacy_output.tsv
+    python $TOOL_FOLDER/scripts/filter_networking_edges.py \
+    $input_pairs \
+    filtered_pairs.tsv \
+    filtered_pairs_old_format.tsv
     """
 }
 
+// Creating the metadata file
+// TODO: Finish this
+process createMetadataFile {
+    publishDir "./nf_output/metadata", mode: 'copy'
 
-// process merge_tsv_efficient{
+    conda "$TOOL_FOLDER/conda_env.yml"
 
-//     publishDir "./nf_output", mode: 'copy'
+    input:
+    file input_metadata
 
-//     conda "$TOOL_FOLDER/conda_env.yml"
+    output:
+    file "merged_metadata.tsv"
 
+    //script in case its NO_FILE
+    """
+    python $TOOL_FOLDER/scripts/merge_metadata.py \
+    $input_metadata \
+    merged_metadata.tsv
+    """
+}
 
-//     input:
-//     file input from Channel.fromPath(params.input)
-//     val x from _val_ch4
+// Calculating the groupings
+process calculateGroupings {
+    publishDir "./nf_output/networking", mode: 'copy'
 
-//     output:
-//     val 5 into _val_ch5
+    conda "$TOOL_FOLDER/conda_env.yml"
 
+    input:
+    file input_metadata
+    file input_clustersummary
+    file input_clusterinfo
 
-//     script:
-//     """
-//     python $TOOL_FOLDER/bin/merge_tsv_files_efficient.py \
-//     $TOOL_FOLDER/test/ \
-//     $TOOL_FOLDER/test/reference_stats/librarysearch.tsv
-//     """
-// }
+    output:
+    file "clustersummary_with_groups.tsv"
 
+    """
+    python $TOOL_FOLDER/scripts/group_abundances.py \
+    $input_clusterinfo \
+    $input_clustersummary \
+    $input_metadata \
+    clustersummary_with_groups.tsv
+    """
+}
 
+// Library Search
+process librarySearchData {
+    conda "$TOOL_FOLDER/conda_env.yml"
 
+    input:
+    each file(input_library)
+    each file(input_spectrum)
+
+    output:
+    file 'search_results/*' optional true
+
+    """
+    mkdir search_results
+    python $TOOL_FOLDER/scripts/library_search_wrapper.py \
+    $input_spectrum $input_library search_results \
+    $TOOL_FOLDER/binaries/convert \
+    $TOOL_FOLDER/binaries/main_execmodule.allcandidates
+    """
+}
+
+process librarymergeResults {
+    publishDir "./nf_output/library_intermediate", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    path "results/*"
+
+    output:
+    path 'merged_results.tsv'
+
+    """
+    python $TOOL_FOLDER/scripts/tsv_merger.py \
+    results merged_results.tsv
+    """
+}
+
+process librarygetGNPSAnnotations {
+    publishDir "./nf_output/library", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    path "merged_results.tsv"
+
+    output:
+    path 'merged_results_with_gnps.tsv'
+
+    """
+    python $TOOL_FOLDER/scripts/getGNPS_library_annotations.py \
+    merged_results.tsv \
+    merged_results_with_gnps.tsv
+    """
+}
 
 
 workflow {
@@ -204,15 +264,44 @@ workflow {
     // Filter the spectra
     (_spectra_reformatted_ch2, _spectra_filtered_ch) = filter_spectra(_features_reformatted_ch, _spectra_reformatted_ch)
 
-    // Prepping the networking parameters
-    // _networking_parameters_ch = prep_molecular_networking_parameters(_spectra_filtered_ch)
+    // Library Search
+    libraries_ch = Channel.fromPath(params.input_libraries + "/*.mgf" )
+    search_results_ch = librarySearchData(libraries_ch, _spectra_filtered_ch)
+    merged_results_ch = librarymergeResults(search_results_ch.collect())
+    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch)
 
-    // // 
-    // _networking_pairs_results_ch = molecular_networking_parallel_step(_networking_parameters_ch.flatten(), _spectra_filtered_ch)
+    // Networking
+    params_ch = networkingGNPSPrepParams(_spectra_filtered_ch)
+    networking_results_temp_ch = calculatePairs(_spectra_filtered_ch, params_ch.collect())
 
-    // // Merging all the individual results into one file
-    // _merge_results_ch = merge_networking_results(_networking_pairs_results_ch.collect())
+    merged_networking_pairs_ch = networking_results_temp_ch.collectFile(name: "merged_pairs.tsv", storeDir: "./nf_output/networking", keepHeader: true)
 
-    // // Filtering network edges
-    // (_fitered_edges_ch, _legacy_edges_ch) = filter_networking_edges(_merge_results_ch)
+    // Filtering the network
+    filtered_networking_pairs_ch = filterNetwork(merged_networking_pairs_ch)
+
+
+    // Handling Metadata, if we don't have one, we'll set it to be empty
+    // if(params.metadata_filename.length() > 0){
+    //     if(params.metadata_filename == "NO_FILE"){
+    //         input_metadata_ch = Channel.of(file("NO_FILE"))
+    //     }
+    //     else{
+    //         input_metadata_ch = Channel.fromPath(params.metadata_filename).first()
+    //     }
+    // }
+    // else{
+    //     input_metadata_ch = Channel.of(file("NO_FILE"))
+    // }
+
+    // merged_metadata_ch = createMetadataFile(input_metadata_ch)
+
+    // // Enriching the network with group mappings
+    // clustersummary_with_groups_ch = calculateGroupings(merged_metadata_ch, clustersummary_ch, clusterinfo_ch)
+
+    // // Adding component and library informaiton
+    // clustersummary_with_network_ch = enrichClusterSummary(clustersummary_with_groups_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
+
+    // // Creating the graphml Network
+    // createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
+
 }
