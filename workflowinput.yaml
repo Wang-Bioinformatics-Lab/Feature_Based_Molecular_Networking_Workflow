@@ -10,12 +10,114 @@ parameterlist:
     - displayname: File Selection
       paramtype: section
 
-    - displayname: Input Data Folder
+    - displayname: Input inputfeatures
       paramtype: fileselector
-      nf_paramname: input_spectra_folder
-      formplaceholder: Enter the path to data
+      nf_paramname: inputfeatures
+      formplaceholder: Enter the path to inputfeatures
       formvalue: ""
-      targettaskfolder: input_spectra
+      targettaskfolder: inputfeatures
+      optional: false
+      selectsinglefile: true
+      folderunroll: true
+
+    - displayname: Input inputspectra
+      paramtype: fileselector
+      nf_paramname: inputspectra
+      formplaceholder: Enter the path to inputspectra
+      formvalue: ""
+      targettaskfolder: inputspectra
+      optional: false
+      selectsinglefile: true
+      folderunroll: true
+
+    - displayname: Input Spectral Library Folder
+      paramtype: fileselector
+      nf_paramname: input_libraries
+      formplaceholder: Enter the path to input_libraries
+      formvalue: ""
+      targettaskfolder: input_libraries
       optional: false
       selectsinglefile: false
       folderunroll: true
+    
+    - displayname: Input Metadata File
+      paramtype: fileselector
+      nf_paramname: metadata_filename
+      formplaceholder: Enter the path to metadata_filename
+      formvalue: ""
+      targettaskfolder: metadata_filename
+      optional: true
+      selectsinglefile: true
+      folderunroll: true
+
+    - displayname: General Parameters
+      paramtype: section
+
+    - displayname: Precursor Ion Tolerance
+      paramtype: text
+      nf_paramname: pm_tolerance
+      formplaceholder: Enter the pm_tolerance
+      formvalue: "2.0"
+      tooltip: "pm_tolerance"
+
+    - displayname: Fragment Ion Tolerance
+      paramtype: text
+      nf_paramname: fragment_tolerance
+      formplaceholder: Enter the fragment_tolerance
+      formvalue: "0.5"
+      tooltip: "fragment_tolerance"
+
+    - displayname: Advanced Filtering Parameters
+      paramtype: section
+
+    - displayname: Min Peak Intensity
+      paramtype: text
+      nf_paramname: min_peak_intensity
+      formplaceholder: Enter the min_peak_intensity
+      formvalue: "0.0"
+      tooltip: "min_peak_intensity"
+    
+    - displayname: Window Filter
+      paramtype: select
+      nf_paramname: window_filter
+      formvalue: "yes"
+      options:
+        - value: "yes"
+          display: "yes"
+        - value: "no"
+          display: "no"
+
+    - displayname: Precursor Window Filter
+      paramtype: select
+      nf_paramname: precursor_filter
+      formvalue: "yes"
+      options:
+        - value: "yes"
+          display: "yes"
+        - value: "no"
+          display: "no"
+
+    - displayname: Networking Parameters
+      paramtype: section
+
+    - displayname: min_cosine
+      paramtype: text
+      nf_paramname: networking_min_cosine
+      formplaceholder: Enter the min_cosine
+      formvalue: "0.7"
+
+    - displayname: min_matched_peaks
+      paramtype: text
+      nf_paramname: networking_min_matched_peaks
+      formplaceholder: Enter the min_matched_peaks
+      formvalue: "6"
+
+    - displayname: networking_max_shift
+      paramtype: text
+      nf_paramname: networking_max_shift
+      formplaceholder: Enter the networking_max_shift
+      formvalue: "1999"
+
+    
+
+    
