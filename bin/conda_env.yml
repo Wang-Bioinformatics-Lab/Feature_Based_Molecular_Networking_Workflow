@@ -9,3 +9,4 @@ dependencies:
     - requests
     - lxml
     - networkx
+    - tqdm
