@@ -27,7 +27,7 @@ parameterlist:
       formvalue: ""
       targettaskfolder: inputspectra
       optional: false
-      selectsinglefile: true
+      selectsinglefile: false
       folderunroll: true
 
     - displayname: Input Spectral Library Folder

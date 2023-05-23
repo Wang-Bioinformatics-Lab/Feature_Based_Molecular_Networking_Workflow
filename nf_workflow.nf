@@ -7,6 +7,9 @@ params.featurefindingtool = "MZMINE"
 params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
 params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"
 
+// Metadata
+params.metadata_filename = "data/mzmine2/gnps_featurefinding/metadata.tsv"
+
 // Libraries
 params.input_libraries = "data/library"
 
@@ -184,16 +187,14 @@ process calculateGroupings {
 
     input:
     file input_metadata
-    file input_clustersummary
-    file input_clusterinfo
+    file input_featuretable
 
     output:
     file "clustersummary_with_groups.tsv"
 
     """
     python $TOOL_FOLDER/scripts/group_abundances.py \
-    $input_clusterinfo \
-    $input_clustersummary \
+    $input_featuretable \
     $input_metadata \
     clustersummary_with_groups.tsv
     """
@@ -255,6 +256,54 @@ process librarygetGNPSAnnotations {
 }
 
 
+// Enriching the Cluster Summary
+process enrichClusterSummary {
+    publishDir "./nf_output/networking", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    file input_clustersummary
+    file input_filtered_pairs
+    file input_library_matches
+
+    output:
+    file "clustersummary_with_network.tsv"
+
+    """
+    python $TOOL_FOLDER/scripts/enrich_cluster_summary.py \
+    $input_clustersummary \
+    $input_filtered_pairs \
+    $input_library_matches \
+    clustersummary_with_network.tsv
+    """
+}
+
+process createNetworkGraphML {
+    publishDir "./nf_output/networking", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    cache false
+
+    input:
+    file input_clustersummary
+    file input_filtered_pairs
+    file input_library_matches
+
+    output:
+    file "network.graphml"
+
+    """
+    python $TOOL_FOLDER/scripts/create_network_graphml.py \
+    $input_clustersummary \
+    $input_filtered_pairs \
+    $input_library_matches \
+    network.graphml
+    """
+}
+
+
 workflow {
   
     def input_features = Channel.fromPath(params.inputfeatures)
@@ -279,29 +328,28 @@ workflow {
     // Filtering the network
     filtered_networking_pairs_ch = filterNetwork(merged_networking_pairs_ch)
 
-
     // Handling Metadata, if we don't have one, we'll set it to be empty
-    // if(params.metadata_filename.length() > 0){
-    //     if(params.metadata_filename == "NO_FILE"){
-    //         input_metadata_ch = Channel.of(file("NO_FILE"))
-    //     }
-    //     else{
-    //         input_metadata_ch = Channel.fromPath(params.metadata_filename).first()
-    //     }
-    // }
-    // else{
-    //     input_metadata_ch = Channel.of(file("NO_FILE"))
-    // }
+    if(params.metadata_filename.length() > 0){
+        if(params.metadata_filename == "NO_FILE"){
+            input_metadata_ch = Channel.of(file("NO_FILE"))
+        }
+        else{
+            input_metadata_ch = Channel.fromPath(params.metadata_filename).first()
+        }
+    }
+    else{
+        input_metadata_ch = Channel.of(file("NO_FILE"))
+    }
 
-    // merged_metadata_ch = createMetadataFile(input_metadata_ch)
+    merged_metadata_ch = createMetadataFile(input_metadata_ch)
 
-    // // Enriching the network with group mappings
-    // clustersummary_with_groups_ch = calculateGroupings(merged_metadata_ch, clustersummary_ch, clusterinfo_ch)
+    // Enriching the network with group mappings
+    clustersummary_with_groups_ch = calculateGroupings(merged_metadata_ch, _features_reformatted_ch)
 
     // // Adding component and library informaiton
-    // clustersummary_with_network_ch = enrichClusterSummary(clustersummary_with_groups_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
+    clustersummary_with_network_ch = enrichClusterSummary(clustersummary_with_groups_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
 
     // // Creating the graphml Network
-    // createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
+    createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
 
 }
