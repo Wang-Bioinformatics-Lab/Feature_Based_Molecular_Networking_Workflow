@@ -13,7 +13,6 @@ Views:
             -   title: "Parent mass"
                 data: "parent mass"
 
-
 -   name: Library Results
     displayname: Library Results
     viewname: librarymatches
@@ -27,7 +26,7 @@ Views:
                 data: "Compound_Name"
             -   title: "MQScore"
                 data: "MQScore"
-    
+
 -   name: Pairs List
     displayname: Pairs List
     viewname: pairslist
@@ -49,6 +48,7 @@ Views:
                 data: Cosine
             -   title: "MatchedPeaks"
                 data: MatchedPeaks
+
 -   name: section
     displayname: Network Visualizations
     viewname: section
