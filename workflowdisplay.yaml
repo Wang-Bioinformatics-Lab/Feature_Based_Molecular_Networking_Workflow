@@ -12,8 +12,6 @@ Views:
                 data: "cluster index"
             -   title: "Parent mass"
                 data: "parent mass"
-            -   title: "# spectra"
-                data: "number of spectra"
 
 
 -   name: Library Results

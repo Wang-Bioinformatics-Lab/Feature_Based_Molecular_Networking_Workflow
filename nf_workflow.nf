@@ -41,7 +41,7 @@ TOOL_FOLDER = "$baseDir/bin"
 // Define the process that will reformat the quantification table
 process quantification_table_reformatted {
 
-    publishDir "./nf_output", mode: 'copy'
+    publishDir "./nf_output/clustering", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -67,7 +67,7 @@ process quantification_table_reformatted {
 
 process filter_spectra{
 
-    publishDir "./nf_output", mode: 'copy'
+    publishDir "./nf_output/clustering", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
