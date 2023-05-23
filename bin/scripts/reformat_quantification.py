@@ -16,6 +16,7 @@ import mzmine_formatter
 import progenesis_formatter
 import mztabm_formatter
 import agilent_formatter
+import agilent2_formatter
 
 
 def main():
@@ -113,6 +114,12 @@ def main():
         input_mgf = input_filenames[0]
         agilent_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
         agilent_formatter.convert_mgf(input_mgf, args.output_mgf)
+    elif args.toolname == "AGILENT2":
+        print("AGILENT2")
+
+        agilent2_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
+
+
     elif args.toolname == "MZTABM":
         print("MZTABM")
         #workflow_parameters = proteosafe.parse_xml_file(args.workflowParameters)
