@@ -10,3 +10,4 @@ dependencies:
     - lxml
     - networkx
     - tqdm
+    - pyteomics

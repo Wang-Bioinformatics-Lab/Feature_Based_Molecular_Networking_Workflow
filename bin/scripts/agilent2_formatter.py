@@ -6,6 +6,9 @@
 """
 import pandas as pd
 import sys
+from pyteomics import mgf
+from collections import defaultdict
+import ming_spectrum_library
 
 def convert_to_feature_csv(input_filename, output_filename):
 
@@ -39,3 +42,63 @@ def convert_to_feature_csv(input_filename, output_filename):
     pivot_df.to_csv(output_filename, sep=",", index=False)
 
     return pivot_df
+
+def convert_mgf(input_filenames, compound_feature_table_df, output_mgf):
+    print(input_filenames)
+
+    compound_map = defaultdict(list)
+
+    for input_filename in input_filenames:
+        print(input_filename)
+
+        # reading the mgf with pyteomics
+        reader = mgf.read(input_filename)
+        for spectrum in reader:
+            compound_nr = int(spectrum["params"]["compound_nr"])
+            compound_map[compound_nr].append(spectrum)
+
+    output_spectrum_list = []
+
+    # Now we can look at all the features and map to the MS2 spectra
+    for feature in compound_feature_table_df.to_dict(orient="records"):
+        compound_nr = int(feature["row ID"])
+
+        all_spectra_list = compound_map[compound_nr]
+        print(compound_nr, len(all_spectra_list))
+        
+        if len(all_spectra_list) == 0:
+            continue
+
+        min_mz_delta = 10000
+        min_spectrum = None
+        feature_mass = feature["row m/z"]
+        feature_id = feature["row ID"]
+        for spectrum in all_spectra_list:
+            # Lets choose the one with the closest m/z to the feature id
+
+            # Calculate the delta
+            delta = feature_mass - float(spectrum["params"]["pepmass"][0])
+
+            if abs(delta) < min_mz_delta:
+                min_mz_delta = abs(delta)
+                min_spectrum = spectrum
+            
+        # Lets add this to the output spectrum list
+        # Creating peaks by zipping
+        peaks = list(zip(min_spectrum["m/z array"], min_spectrum["intensity array"]))
+
+        new_spectrum = ming_spectrum_library.Spectrum(output_mgf, int(feature_id), int(feature_id), peaks, min_spectrum["params"]["pepmass"][0], 
+                                                    min_spectrum["params"]["charge"][0], 2)
+        
+        output_spectrum_list.append(new_spectrum)
+
+    # Sort list by scan in ascending order
+    output_spectrum_list = sorted(output_spectrum_list, key=lambda x: x.scan)
+
+    # Writing the output
+    spectrum_collection = ming_spectrum_library.SpectrumCollection("")
+    spectrum_collection.spectrum_list = output_spectrum_list
+    spectrum_collection.make_scans_contiguous()
+    spectrum_collection.save_to_mgf(open(output_mgf, "w"), renumber_scans=False)    
+
+    return spectrum_collection
