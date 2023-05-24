@@ -50,6 +50,28 @@ parameterlist:
       selectsinglefile: true
       folderunroll: true
 
+    - displayname: Feature Finding Tool
+      paramtype: select
+      nf_paramname: featurefindingtool
+      formvalue: MZMINE
+      options:
+        - value: MZMINE
+          display: MZMINE
+        - value: OPENMS
+          display: OPENMS
+        - value: PROGENESIS
+          display: PROGENESIS
+        - value: XCMS3
+          display: XCMS3
+        - value: METABOSCAPE
+          display: METABOSCAPE
+        - value: MSDIAL
+          display: MSDIAL
+        - value: OPTIMUS
+          display: OPTIMUS
+        - value: AGILENT2
+          display: AGILENT2
+
     - displayname: General Parameters
       paramtype: section
 
