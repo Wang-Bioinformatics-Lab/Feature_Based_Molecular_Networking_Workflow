@@ -12,6 +12,8 @@ Views:
                 data: "cluster index"
             -   title: "Parent mass"
                 data: "parent mass"
+            -   title: "Compound_Name"
+                data: "Compound_Name"
 
 -   name: Library Results
     displayname: Library Results
