@@ -25,7 +25,10 @@ def convert_network(G):
 
         # Fixing Group Names
         for column in group_columns:
-            new_key = "ATTRIBUTE_GNPS:{}".format(column.replace("GNPSGROUP:", ""))
+            if column.upper().startswith("ATTRIBUTE"):
+                new_key = column.upper()
+            else:
+                new_key = "ATTRIBUTE_GNPS:{}".format(column.replace("GNPSGROUP:", ""))
             new_G.nodes[node][new_key] = G.nodes[node][column]
 
         # Fixing node attributes
