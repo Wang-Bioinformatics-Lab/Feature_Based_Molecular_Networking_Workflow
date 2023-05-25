@@ -112,7 +112,6 @@ def main():
     print(metadata_df)
 
     # Enriching metadata group counts
-    # TODO :finish this efficiently
     clustersummary_df = calculate_groups_metadata(feature_table_df, metadata_df)
 
     # Writing out the file
