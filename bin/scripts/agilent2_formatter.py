@@ -10,8 +10,8 @@ from pyteomics import mgf
 from collections import defaultdict
 import ming_spectrum_library
 
-def convert_to_feature_csv(input_filename, output_filename):
 
+def _convert_details_feature_csv(input_filename, output_filename):
     input_df = pd.read_csv(input_filename, sep=',', skiprows=2, index_col=False)
 
     # We need to turn this table into a proper table
@@ -43,9 +43,28 @@ def convert_to_feature_csv(input_filename, output_filename):
 
     return pivot_df
 
-def convert_mgf(input_filenames, compound_feature_table_df, output_mgf):
-    print(input_filenames)
+def _convert_compoundgroups_feature_csv(input_filename, output_filename):
+    input_df = pd.read_csv(input_filename, sep='\t')
 
+    new_table_df = pd.DataFrame()
+
+    # We need to turn this table into a proper table
+    new_table_df["row ID"] = input_df["Group"]
+    new_table_df["row m/z"] = input_df["Mass (avg)"]
+    new_table_df["row retention time"] = input_df["RT (avg)"]
+
+    # Figuring out filenames, its all columns after 38
+    for column in input_df.columns[38:]:
+        new_table_df[column + " Peak area"] = input_df[column]        
+    
+    return new_table_df
+
+def convert_to_feature_csv(input_filename, output_filename):
+    return _convert_compoundgroups_feature_csv(input_filename, output_filename)
+    #return _convert_details_feature_csv(input_filename, output_filename)
+    
+
+def convert_mgf(input_filenames, compound_feature_table_df, output_mgf):
     compound_map = defaultdict(list)
 
     for input_filename in input_filenames:

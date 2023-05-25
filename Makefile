@@ -6,6 +6,6 @@ run_no_metadata:
 
 run_agilent2:
 	nextflow run ./nf_workflow.nf -resume -c nextflow.config \
-		--inputfeatures=data/agilent/new_version/Qual_Combined_Compound_List.csv \
+		--inputfeatures=data/agilent/new_version/Compound_Groups.tsv \
 		--inputspectra=data/agilent/new_version/spectra/ \
 		--featurefindingtool=AGILENT2
