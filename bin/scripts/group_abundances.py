@@ -37,6 +37,7 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     cluster_summary_df = pd.DataFrame()
     cluster_summary_df["cluster index"] = feature_table_df["row ID"]
     cluster_summary_df["parent mass"] = feature_table_df["row m/z"]
+    cluster_summary_df["RTMean"] = feature_table_df["row retention time"]
 
     if len(metadata_df) == 0:
         return cluster_summary_df
