@@ -55,7 +55,10 @@ def _convert_compoundgroups_feature_csv(input_filename, output_filename):
 
     # Figuring out filenames, its all columns after 38
     for column in input_df.columns[38:]:
-        new_table_df[column + " Peak area"] = input_df[column]        
+        new_table_df[column + " Peak area"] = input_df[column]
+
+    # Saving the file
+    new_table_df.to_csv(output_filename, sep=",", index=False)
     
     return new_table_df
 

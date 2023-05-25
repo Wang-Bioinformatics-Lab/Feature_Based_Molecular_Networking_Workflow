@@ -29,16 +29,6 @@ parameterlist:
       optional: false
       selectsinglefile: false
       folderunroll: true
-
-    - displayname: Input Spectral Library Folder
-      paramtype: fileselector
-      nf_paramname: input_libraries
-      formplaceholder: Enter the path to input_libraries
-      formvalue: ""
-      targettaskfolder: input_libraries
-      optional: false
-      selectsinglefile: false
-      folderunroll: true
     
     - displayname: Input Metadata File
       paramtype: fileselector
@@ -48,6 +38,16 @@ parameterlist:
       targettaskfolder: metadata_filename
       optional: true
       selectsinglefile: true
+      folderunroll: true
+    
+    - displayname: Input Spectral Library Folder
+      paramtype: fileselector
+      nf_paramname: input_libraries
+      formplaceholder: Enter the path to input_libraries
+      formvalue: "LIBRARYLOCATION/LC"
+      targettaskfolder: input_libraries
+      optional: false
+      selectsinglefile: false
       folderunroll: true
 
     - displayname: Feature Finding Tool

@@ -13,7 +13,7 @@ from collections import defaultdict
 
 def create_attribute_group_list(metadata_df):
     # Determining all the groups we want to calculate over columsn with prefix ATTRIBUTE_
-    all_attributes = [x for x in metadata_df.columns if x.startswith("ATTRIBUTE_")]
+    all_attributes = [x for x in metadata_df.columns if x.upper().startswith("ATTRIBUTE_")]
 
     all_attribute_groups = []
 
@@ -41,8 +41,8 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     if len(metadata_df) == 0:
         return cluster_summary_df
     
-    # DEBUGGING
-    return cluster_summary_df
+    if "filename" not in metadata_df.columns:
+        raise Exception("Metadata does not contain filename column")
     
     # Cleaning metadata
     metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x))
@@ -53,89 +53,41 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     # Getting the attributes
     all_attributes, all_attribute_groups = create_attribute_group_list(metadata_df)
 
-    for cluster in tqdm(cluster_summary_df.to_dict(orient="records")):
+    # Making the quant table tall
+    tall_feature_table_df = pd.melt(feature_table_df, id_vars=["row ID", "row m/z", "row retention time"], value_vars=filename_columns, var_name="filename", value_name="area")
+    tall_feature_table_df["filename"] = tall_feature_table_df["filename"].apply(lambda x: x.replace("Peak area", "").rstrip())
+
+    # Merging in metadata
+    tall_feature_table_df = tall_feature_table_df.merge(metadata_df, on="filename", how="inner")
+
+
+    # Doing the actual calculations
+    cluster_summary_list = cluster_summary_df.to_dict(orient="records")
+
+    for cluster in tqdm(cluster_summary_list):
         # Getting the cluster index
         cluster_index = cluster["cluster index"]
 
         # filter the dataframe
-        filtered_cluster_df = feature_table_df[feature_table_df["row ID"] == cluster_index]
-        filtered_cluster_df = filtered_cluster_df[filename_columns]
-
-        # transposing the dataframe
-        filtered_cluster_df = filtered_cluster_df.transpose()
-
-        # Stripping of Peak area
-        filtered_cluster_df["filename"] = [x.replace(" Peak area", "") for x in filtered_cluster_df.index]
-
-        # Setting the area
-        filtered_cluster_df["area"] = filtered_cluster_df[0]
-
-        print(metadata_df)
-
-        # Merging in metadata
-        filtered_cluster_df = filtered_cluster_df.merge(metadata_df, on="filename", how="inner")
+        filtered_cluster_df = tall_feature_table_df[tall_feature_table_df["row ID"] == cluster_index]
 
         # Attribute_group
         for attribute_group in all_attribute_groups:
-            print(attribute_group)
             attribute = attribute_group["attribute"]
             group_name = attribute_group["group"]
 
-            # Calculating the group mean
-            # TODO: Finish This
+            try:
+                # filtering the data
+                group_data_df = filtered_cluster_df[filtered_cluster_df[attribute] == group_name]
 
-            cluster[group_column] = group_count
+                # Calcualting the average area
+                area_average = group_data_df["area"].mean()
+            except:
+                area_average = 0
+            
+            group_column = "{}:GNPSGROUP:{}".format(attribute, group_name)
 
-        print(filtered_cluster_df)
-
-        exit(0)
-
-        break
-
-
-    # Getting all the filenames
-    #print(metadata_df)
-
-    print("XXX")
-
-
-    # Cleaning the filenames
-    clusterinfo_df["#Filename"] = clusterinfo_df["#Filename"].apply(lambda x: os.path.basename(x))
-    metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x))
-
-    # Folding in the metadata into clusterinfo
-    clusterinfo_df = clusterinfo_df.merge(metadata_df, left_on="#Filename", right_on="filename", how="left")
-
-    # First lets group the cluster info by cluster index
-    grouped_clusterinfo_df = clusterinfo_df.groupby("#ClusterIdx")
-
-    # loop through all the clusters
-    cluster_summary_list = clustersummary_df.to_dict(orient="records")
-
-    
-
-    for cluster in tqdm(cluster_summary_list):
-        # filter for the grouped list
-        cluster_index = cluster["cluster index"]
-        clusterinfo_per_group_df = grouped_clusterinfo_df.get_group(cluster_index)
-
-        # TODO: We can likely speed this up with pandas operations
-
-        # Attribute_group
-        for attribute_group in all_attribute_groups:
-            #print(attribute_group)
-
-            # filtering the data
-            group_count = len(clusterinfo_per_group_df[clusterinfo_per_group_df[attribute_group["attribute"]] == attribute_group["group"]])
-            group_column = "{}:GNPSGROUP:{}".format(attribute_group["attribute"], attribute_group["group"])
-
-            cluster[group_column] = group_count
-    
-        # Adding the cluster information for which group membership it is a part of
-        for attribute in all_attributes:
-            # Finding all groups in the attribute
-            all_groups = set(clusterinfo_per_group_df[attribute])
-            cluster[attribute] = ",".join(all_groups)
+            cluster[group_column] = area_average
 
     return pd.DataFrame(cluster_summary_list)
 
