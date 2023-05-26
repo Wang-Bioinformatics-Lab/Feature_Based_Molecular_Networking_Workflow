@@ -10,6 +10,8 @@ def _load_metadata(input_filename):
         input_df = pd.read_csv(input_filename, sep=",")
     elif input_filename.endswith(".xlsx"):
         input_df = pd.read_excel(input_filename)
+    else:
+        input_df = pd.read_csv(input_filename, sep=None)
 
     return input_df
 
