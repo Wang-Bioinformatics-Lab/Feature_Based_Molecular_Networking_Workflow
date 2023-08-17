@@ -8,12 +8,18 @@ Views:
     parameters:
         filename: nf_output/networking/clustersummary_with_network.tsv
         columns:
+            -   title: "View"
+                data: 
             -   title: "Cluster"
                 data: "cluster index"
             -   title: "Parent mass"
                 data: "parent mass"
             -   title: "Compound_Name"
                 data: "Compound_Name"
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["cluster index"]}">View Spectrum</a>
+        `;}}]'
 
 -   name: Library Results
     displayname: Library Results
@@ -28,8 +34,13 @@ Views:
                 data: "Compound_Name"
             -   title: "MQScore"
                 data: "MQScore"
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["#Scan#"]}"&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:${row["SpectrumID"]}>View Mirror</a>
+        `;}}]'
 
--   name: Pairs List
+
+-   name: Network Pairs List
     displayname: Pairs List
     viewname: pairslist
     displaytype: datatable
@@ -50,6 +61,10 @@ Views:
                 data: Cosine
             -   title: "MatchedPeaks"
                 data: MatchedPeaks
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["CLUSTERID1"]}"&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["CLUSTERID2"]}>View Mirror</a>
+        `;}}]'
 
 -   name: section
     displayname: Network Visualizations
