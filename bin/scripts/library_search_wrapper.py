@@ -10,17 +10,14 @@ import uuid
 import pandas as pd
 from collections import defaultdict
 
-def chunks(l, n):
-    # For item i in a range that is a length of l,
-    for i in range(0, len(l), n):
-        # Create an index range for l of n items:
-        yield l[i:i+n]
-
-def search_wrapper(search_param_dict):
-    search_files(search_param_dict["spectra_files"], search_param_dict["temp_folder"], search_param_dict["tempresults_folder"], search_param_dict["args"], search_param_dict["params_object"], search_param_dict["library_files"])
-
 def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, path_to_convert, path_to_main_exec,
-    min_matched_peaks=6, top_k_results=1, ion_tolerance=0.5, pm_tolerance=20, analog_search=0, max_shift_mass=0.5):
+    min_cosine=0.7,
+    min_matched_peaks=6, 
+    top_k_results=1, 
+    pm_tolerance=2.0, 
+    ion_tolerance=0.5, 
+    analog_search=0, 
+    max_shift_mass=0.5):
 
 
     parameter_filename = os.path.join(temp_folder, str(uuid.uuid4()) + ".params")
@@ -31,7 +28,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
     output_parameter_file.write("TOP_K_RESULTS={}\n".format(top_k_results))
     output_parameter_file.write("search_peak_tolerance={}\n".format(ion_tolerance))
     output_parameter_file.write("search_parentmass_tolerance={}\n".format(pm_tolerance))
-    output_parameter_file.write("ANALOG_SEARCH={}\n".format(0))
+    output_parameter_file.write("ANALOG_SEARCH={}\n".format(analog_search))
     output_parameter_file.write("MAX_SHIFT_MASS={}\n".format(1999))
 
     #Filtering Criteria
@@ -41,7 +38,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
     output_parameter_file.write("FILTER_LIBRARY={}\n".format(1))
 
     #Scoring Criteria
-    output_parameter_file.write("SCORE_THRESHOLD={}\n".format(0.7))
+    output_parameter_file.write("SCORE_THRESHOLD={}\n".format(min_cosine))
 
     #Output
     output_parameter_file.write("RESULTS_DIR={}\n".format(tempresults_folder))
@@ -94,6 +91,15 @@ def main():
     parser.add_argument('convert_binary', help='conversion binary')
     parser.add_argument('librarysearch_binary', help='librarysearch_binary')
 
+    parser.add_argument('--pm_tolerance', default=0.5, help='pm_tolerance')
+    parser.add_argument('--fragment_tolerance', default=0.5, help='fragment_tolerance')
+    parser.add_argument('--library_min_cosine', default=0.7, help='library_min_cosine')
+    parser.add_argument('--library_min_matched_peaks', default=6, help='library_min_matched_peaks')
+    parser.add_argument('--topk', default=1, help='topk')
+
+    parser.add_argument('--analog_search', default=0, help='Turn on analog search, 0 or 1', type=int)
+
+
     args = parser.parse_args()
 
     temp_folder = "temp"
@@ -111,14 +117,24 @@ def main():
     print(args)
 
     # performing the search
-    search_files(args.spectrum_file, args.library_file, \
-        temp_folder, tempresults_folder, \
-        args.convert_binary, args.librarysearch_binary)
+    search_files(args.spectrum_file, args.library_file,
+        temp_folder, tempresults_folder,
+        args.convert_binary, args.librarysearch_binary,
+        min_cosine=args.library_min_cosine,
+        min_matched_peaks=args.library_min_matched_peaks, 
+        top_k_results=args.topk, 
+        pm_tolerance=args.pm_tolerance,
+        ion_tolerance=args.fragment_tolerance,
+        analog_search=args.analog_search)
 
     # Reformatting the output
     output_results_file = os.path.join(args.result_folder, os.path.basename(args.spectrum_file) + "_" + os.path.basename(args.library_file) + ".tsv")
     
     results_df = pd.read_csv(os.path.join(tempresults_folder, "tempresults"), sep="\t")
+
+    # Fixing Results, by basename
+    results_df["SpectrumFile"] = results_df["SpectrumFile"].apply(lambda x: os.path.basename(x))
+
     results_df.to_csv(output_results_file, sep="\t", index=False)
 
 

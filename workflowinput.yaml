@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "0.1"
+workflowversion: "0.1.1"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -140,6 +140,35 @@ parameterlist:
       formplaceholder: Enter the networking_max_shift
       formvalue: "1999"
 
-    
+    - displayname: Library Search Parameters
+      paramtype: section
 
+    - displayname: Library Minimum Cosine
+      paramtype: text
+      nf_paramname: library_min_cosine
+      formplaceholder: Enter the library_min_cosine
+      formvalue: "0.7"
+
+    - displayname: Library Minimum Matched Peaks
+      paramtype: text
+      nf_paramname: library_min_matched_peaks
+      formplaceholder: Enter the library_min_matched_peaks
+      formvalue: "6"
+
+    # Analog Search
+    - displayname: Analog Search
+      paramtype: select
+      nf_paramname: library_analog_search
+      formvalue: "0"
+      options:
+        - value: "0"
+          display: "No"
+        - value: "1"
+          display: "Yes"
+
+    - displayname: Top-K
+      paramtype: text
+      nf_paramname: library_topk
+      formplaceholder: Enter the topk
+      formvalue: "1"
     

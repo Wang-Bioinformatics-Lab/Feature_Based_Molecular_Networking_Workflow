@@ -234,7 +234,6 @@ def enrich_output(input_filename, output_filename, topk=None):
             output_result_dict["npclassifier_class"] = "N/A"
             output_result_dict["npclassifier_pathway"] = "N/A"
 
- 
         output_list.append(output_result_dict)
 
     pd.DataFrame(output_list).to_csv(output_filename, sep="\t", index=False)
