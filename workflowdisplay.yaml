@@ -83,6 +83,15 @@ Views:
             -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network.graphml
             -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/specs_ms.mgf
 
+-   name: Export Network in Cytoscape
+    displayname: Export Network in Cytoscape
+    viewname: visualizecytoscape
+    displaytype: linkout
+    parameters:
+        baseurl: https://cytoscape.gnps2.org/process
+        urlparam:
+            -   task:[task]
+
 -   name: section
     displayname: Download Network Files
     viewname: section
