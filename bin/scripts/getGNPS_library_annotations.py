@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 def enrich_output(input_filename, output_filename, topk=None):
     spectrum_id_cache = {}
-    molecule_explorer_df = pd.DataFrame(ming_gnps_library.get_molecule_explorer_dataset_data())
+    # molecule_explorer_df = pd.DataFrame(ming_gnps_library.get_molecule_explorer_dataset_data())
 
     if not os.path.exists(input_filename):
         open(output_filename, "w").close()
@@ -67,6 +67,8 @@ def enrich_output(input_filename, output_filename, topk=None):
             raise
         except:
             continue
+
+        # TODO: if there is an error in getting the IDs, we should just try to pass as much through as possible
 
         output_result_dict = {}
 
@@ -135,14 +137,14 @@ def enrich_output(input_filename, output_filename, topk=None):
         output_result_dict["tags"] = (tag_string)
 
         #Getting molecule explorer information
-        compound_name = gnps_library_spectrum["annotations"][0]["Compound_Name"].replace("\t", "")
-        compound_filtered_df = molecule_explorer_df[molecule_explorer_df["compound_name"] == compound_name]
-        if len(compound_filtered_df) == 1:
-            output_result_dict["MoleculeExplorerDatasets"] = (compound_filtered_df.to_dict(orient="records")[0]["number_datasets"])
-            output_result_dict["MoleculeExplorerFiles"] = (compound_filtered_df.to_dict(orient="records")[0]["number_files"])
-        else:
-            output_result_dict["MoleculeExplorerDatasets"] = (0)
-            output_result_dict["MoleculeExplorerFiles"] = (0)
+        # compound_name = gnps_library_spectrum["annotations"][0]["Compound_Name"].replace("\t", "")
+        # compound_filtered_df = molecule_explorer_df[molecule_explorer_df["compound_name"] == compound_name]
+        # if len(compound_filtered_df) == 1:
+        #     output_result_dict["MoleculeExplorerDatasets"] = (compound_filtered_df.to_dict(orient="records")[0]["number_datasets"])
+        #     output_result_dict["MoleculeExplorerFiles"] = (compound_filtered_df.to_dict(orient="records")[0]["number_files"])
+        # else:
+        #     output_result_dict["MoleculeExplorerDatasets"] = (0)
+        #     output_result_dict["MoleculeExplorerFiles"] = (0)
         
         # Calculating inchi
         if len(output_result_dict["Smiles"]) > 5 and len(output_result_dict["INCHI"]) < 5:
@@ -234,6 +236,7 @@ def enrich_output(input_filename, output_filename, topk=None):
             output_result_dict["npclassifier_class"] = "N/A"
             output_result_dict["npclassifier_pathway"] = "N/A"
 
+ 
         output_list.append(output_result_dict)
 
     pd.DataFrame(output_list).to_csv(output_filename, sep="\t", index=False)
