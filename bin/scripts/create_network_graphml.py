@@ -29,7 +29,7 @@ def convert_network(G):
                 new_key = column.upper()
             else:
                 new_key = "ATTRIBUTE_GNPS:{}".format(column.replace("GNPSGROUP:", ""))
-            new_G.nodes[node][new_key] = G.nodes[node][column]
+            new_G.nodes[node][new_key] = float(G.nodes[node][column])
 
         # Fixing node attributes
         new_G.nodes[node]["mz"] = G.nodes[node]["parent mass"]
