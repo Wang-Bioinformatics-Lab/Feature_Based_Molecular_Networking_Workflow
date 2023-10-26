@@ -44,7 +44,7 @@ parameterlist:
       paramtype: fileselector
       nf_paramname: input_libraries
       formplaceholder: Enter the path to input_libraries
-      formvalue: "LIBRARYLOCATION/LC"
+      formvalue: "LIBRARYLOCATION/LC/LIBRARY"
       targettaskfolder: input_libraries
       optional: false
       selectsinglefile: false
