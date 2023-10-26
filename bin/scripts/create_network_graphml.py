@@ -32,9 +32,9 @@ def convert_network(G):
             new_G.nodes[node][new_key] = float(G.nodes[node][column])
 
         # Fixing node attributes
-        new_G.nodes[node]["mz"] = G.nodes[node]["parent mass"]
-        new_G.nodes[node]["rt"] = G.nodes[node]["RTMean"]
-        new_G.nodes[node]["rt_min"] = G.nodes[node]["RTMean"]
+        new_G.nodes[node]["mz"] = float("{:.4f}".format(float(G.nodes[node]["parent mass"])))
+        new_G.nodes[node]["rt"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
+        new_G.nodes[node]["rt_min"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
         new_G.nodes[node]["charge"] = G.nodes[node]["charge"]
         new_G.nodes[node]["component"] = G.nodes[node]["component"]
 
