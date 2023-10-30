@@ -27,7 +27,10 @@ def main():
     df_filtered_pairs = pd.read_csv(args.input_filtered_pairs, sep='\t')
 
     # Loading Library Matches
-    df_library_matches = pd.read_csv(args.input_library_matches, sep='\t')
+    try:
+        df_library_matches = pd.read_csv(args.input_library_matches, sep='\t')
+    except:
+        df_library_matches = pd.DataFrame(columns=['#Scan#', 'Compound_Name', 'MQScore'])
 
     # Get mapping from node  to component
     node_to_component = {}
