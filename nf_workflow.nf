@@ -253,7 +253,10 @@ process librarymergeResults {
 
     """
     python $TOOL_FOLDER/scripts/tsv_merger.py \
-    results merged_results.tsv
+    results merged_results.tsv \
+    --topk $params.library_topk \
+    --key_column "#Scan#" \
+    --sort_column MQScore
     """
 }
 
