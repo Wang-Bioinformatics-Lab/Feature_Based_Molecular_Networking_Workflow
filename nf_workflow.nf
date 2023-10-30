@@ -337,6 +337,8 @@ workflow {
     libraries_ch = Channel.fromPath(params.input_libraries + "/*.mgf" )
     search_results_ch = librarySearchData(libraries_ch, _spectra_filtered_ch)
     merged_results_ch = librarymergeResults(search_results_ch.collect())
+    merged_results_ch = merged_results_ch.ifEmpty(file("NO_FILE"))
+
     gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch)
 
     // Networking

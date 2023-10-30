@@ -27,7 +27,10 @@ def main():
     df_filtered_pairs = pd.read_csv(args.input_filtered_pairs, sep='\t')
 
     # Loading Library Matches
-    df_library_matches = pd.read_csv(args.input_library_matches, sep='\t')
+    try:
+        df_library_matches = pd.read_csv(args.input_library_matches, sep='\t')
+    except:
+        df_library_matches = pd.DataFrame(columns=['#Scan#', 'Compound_Name', 'MQScore'])
 
     # Get mapping from node  to component
     node_to_component = {}
@@ -47,6 +50,10 @@ def main():
     df_cluster_summary['component'] = df_cluster_summary['component'].astype(int)
 
     # Adding library matches, merging
+
+    # Taking the top hit from the libraries
+    df_library_matches = df_library_matches.sort_values(by=['MQScore'], ascending=[False])
+    df_library_matches = df_library_matches.drop_duplicates(subset=['#Scan#'], keep='first')
 
     # Filtering columns
     df_library_matches = df_library_matches[['#Scan#', 'Compound_Name']]
