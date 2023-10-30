@@ -48,6 +48,10 @@ def main():
 
     # Adding library matches, merging
 
+    # Taking the top hit from the libraries
+    df_library_matches = df_library_matches.sort_values(by=['MQScore'], ascending=[False])
+    df_library_matches = df_library_matches.drop_duplicates(subset=['#Scan#'], keep='first')
+
     # Filtering columns
     df_library_matches = df_library_matches[['#Scan#', 'Compound_Name']]
 
