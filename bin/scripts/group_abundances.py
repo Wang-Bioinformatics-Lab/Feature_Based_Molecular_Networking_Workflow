@@ -46,7 +46,7 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
         raise Exception("Metadata does not contain filename column")
     
     # Cleaning metadata
-    metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x))
+    metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x).rstrip())
 
     # Getting filename columns
     filename_columns = [x for x in feature_table_df.columns if x.endswith("Peak area")]
@@ -60,7 +60,6 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
 
     # Merging in metadata
     tall_feature_table_df = tall_feature_table_df.merge(metadata_df, on="filename", how="inner")
-
 
     # Doing the actual calculations
     cluster_summary_list = cluster_summary_df.to_dict(orient="records")
@@ -77,11 +76,12 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
             attribute = attribute_group["attribute"]
             group_name = attribute_group["group"]
 
+            # Doing the actual calculations
             try:
                 # filtering the data
                 group_data_df = filtered_cluster_df[filtered_cluster_df[attribute] == group_name]
 
-                # Calcualting the average area
+                # Calculating the average area
                 area_average = group_data_df["area"].mean()
             except:
                 area_average = 0
