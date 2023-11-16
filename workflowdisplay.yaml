@@ -120,3 +120,21 @@ Views:
     displaytype: download
     parameters:
         filename: nf_output/clustering/specs_ms.mgf
+
+-   name: section
+    displayname: Downstream Analysis
+    viewname: section
+    displaytype: section
+
+-   name: Downstream Analysis - Run Chemwalker Analysis
+    displayname: Downstream Analysis - Run Chemwalker Analysis
+    viewname: downstreamchemwalker
+    displaytype: linkout
+    parameters:
+        baseurl: /workflowinput
+        urlparam:
+            -   workflowname:chemwalker_nextflow_workflow
+        hashparam:
+            -   taskid:[task]
+            -   workflow:GNPS2
+            -   description:Downstream from [task] Feature Based Molecular Networking
