@@ -19,6 +19,8 @@ Views:
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["cluster index"]}">View Spectrum</a>
+            <br>
+            <a target="_blank" href="https://plotter.gnps2.org/?gnps_quant_table_usi=mzspec:GNPS2:TASK-${task}-nf_output/clustering/featuretable_reformated.csv&gnps_metadata_table_usi=mzspec:GNPS2:TASK-${task}-nf_output/metadata/merged_metadata.tsv&feature=${row["cluster index"]}">View Box Plot</a>
         `;}}]'
 
 -   name: Library Results
@@ -93,6 +95,17 @@ Views:
             -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network.graphml
             -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/specs_ms.mgf
 
+-   name: Visualize Network w/ Singletons in Browser
+    displayname: Visualize Full Network w/ Singletons in Browser
+    viewname: visualizefullsingletonnetwork
+    displaytype: linkout
+    parameters:
+        baseurl: /dashboards/networkviewer
+        urlparam:
+            -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network_singletons.graphml
+            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/specs_ms.mgf
+
+
 -   name: Export Network in Cytoscape
     displayname: Export Network in Cytoscape
     viewname: visualizecytoscape
@@ -113,6 +126,13 @@ Views:
     displaytype: download
     parameters:
         filename: nf_output/networking/network.graphml
+
+-   name: Download Network with Singletons GraphML
+    displayname: Download Network with Singletons GraphML
+    viewname: graphmlsingletons
+    displaytype: download
+    parameters:
+        filename: nf_output/networking/network_singletons.graphml
 
 -   name: Download Consensus MS/MS MGF
     displayname: Download Consensus MS/MS MGF

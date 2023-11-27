@@ -316,13 +316,15 @@ process createNetworkGraphML {
 
     output:
     file "network.graphml"
+    file "network_singletons.graphml"
 
     """
     python $TOOL_FOLDER/scripts/create_network_graphml.py \
     $input_clustersummary \
     $input_filtered_pairs \
     $input_library_matches \
-    network.graphml
+    network.graphml \
+    network_singletons.graphml
     """
 }
 
