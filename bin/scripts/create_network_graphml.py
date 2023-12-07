@@ -39,13 +39,30 @@ def convert_network(G):
                     pass
 
         # Fixing node attributes
-        new_G.nodes[node]["mz"] = float("{:.4f}".format(float(G.nodes[node]["parent mass"])))
-        new_G.nodes[node]["rt"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
-        new_G.nodes[node]["rt_min"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
-        new_G.nodes[node]["charge"] = G.nodes[node]["charge"]
-        new_G.nodes[node]["component"] = G.nodes[node]["component"]
-
-        node_to_component[node] = G.nodes[node]["component"]
+        try:
+            new_G.nodes[node]["mz"] = float("{:.4f}".format(float(G.nodes[node]["parent mass"])))
+        except:
+            new_G.nodes[node]["mz"] = 0.0
+        
+        try:
+            new_G.nodes[node]["rt"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
+            new_G.nodes[node]["rt_min"] = float("{:.2f}".format(float(G.nodes[node]["RTMean"])))
+        except:
+            new_G.nodes[node]["rt"] = 0.0
+            new_G.nodes[node]["rt_min"] = 0.0
+        
+        try:
+            new_G.nodes[node]["charge"] = G.nodes[node]["charge"]
+        except:
+            new_G.nodes[node]["charge"] = 0
+        
+        try:
+            new_G.nodes[node]["component"] = G.nodes[node]["component"]
+            node_to_component[node] = G.nodes[node]["component"]
+        except:
+            new_G.nodes[node]["component"] = 0
+            node_to_component[node] = -1
+        
         
         if "Compound_Name" in G.nodes[node]:
             new_G.nodes[node]["library_compound_name"] = G.nodes[node]["Compound_Name"]
