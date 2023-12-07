@@ -115,8 +115,8 @@ Views:
         urlparam:
             -   task:[task]
 
--   name: Export Network in Cytoscape with singletons
-    displayname: Export Network in Cytoscapewith singletons
+-   name: Export Network in Cytoscape with Singletons
+    displayname: Export Network in Cytoscape with Singletons
     viewname: visualizecytoscapesingleton
     displaytype: linkout
     parameters:
