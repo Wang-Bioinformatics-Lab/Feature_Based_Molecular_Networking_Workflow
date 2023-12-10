@@ -169,3 +169,17 @@ Views:
             -   taskid:[task]
             -   workflow:GNPS2
             -   description:Downstream from [task] Feature Based Molecular Networking
+
+-   name: Downstream Analysis - Run Transitive Alignments
+    displayname: Downstream Analysis - Run Transitive Alignments
+    viewname: downstreamtransitive
+    displaytype: linkout
+    parameters:
+        baseurl: /workflowinput
+        urlparam:
+            -   workflowname:Transitive_alignment_workflow
+        hashparam:
+            -   input_graphml:TASKLOCATION/[task]/nf_output/networking/network_singletons.graphml
+            -   input_pairs:TASKLOCATION/[task]/nf_output/networking/merged_pairs.tsv
+            -   input_spectra:TASKLOCATION/[task]/nf_output/clustering/spectra_reformatted.mgf
+            -   description:Downstream from [task] Feature Based Molecular Networking
