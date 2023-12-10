@@ -18,7 +18,7 @@ Views:
                 data: "Compound_Name"
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
-            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["cluster index"]}">View Spectrum</a>
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["cluster index"]}">View Spectrum</a>
             <br>
             <a target="_blank" href="https://plotter.gnps2.org/?gnps_quant_table_usi=mzspec:GNPS2:TASK-${task}-nf_output/clustering/featuretable_reformated.csv&gnps_metadata_table_usi=mzspec:GNPS2:TASK-${task}-nf_output/metadata/merged_metadata.tsv&feature=${row["cluster index"]}">View Box Plot</a>
         `;}}]'
@@ -50,7 +50,7 @@ Views:
                 data: SpectrumID
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
-            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["#Scan#"]}&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:${row["SpectrumID"]}">View Mirror</a>
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["#Scan#"]}&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:${row["SpectrumID"]}">View Mirror</a>
         `;}}]'
 
 
@@ -77,7 +77,7 @@ Views:
                 data: MatchedPeaks
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
-            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["CLUSTERID1"]}&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/specs_ms.mgf:scan:${row["CLUSTERID2"]}">View Mirror</a>
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID1"]}&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID2"]}">View Mirror</a>
         `;}}]'
 
 -   name: section
@@ -93,7 +93,7 @@ Views:
         baseurl: /dashboards/networkviewer
         urlparam:
             -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network.graphml
-            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/specs_ms.mgf
+            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/spectra_reformatted.mgf
 
 -   name: Visualize Network w/ Singletons in Browser
     displayname: Visualize Full Network w/ Singletons in Browser
@@ -103,7 +103,7 @@ Views:
         baseurl: /dashboards/networkviewer
         urlparam:
             -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network_singletons.graphml
-            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/specs_ms.mgf
+            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/spectra_reformatted.mgf
 
 
 -   name: Export Network in Cytoscape
@@ -150,7 +150,7 @@ Views:
     viewname: specms
     displaytype: download
     parameters:
-        filename: nf_output/clustering/specs_ms.mgf
+        filename: nf_output/clustering/spectra_reformatted.mgf
 
 -   name: section
     displayname: Downstream Analysis
