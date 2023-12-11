@@ -170,6 +170,13 @@ Views:
             -   workflow:GNPS2
             -   description:Downstream from [task] Feature Based Molecular Networking
 
+-   name: Downstream Analysis - Hitchhiker Statistics Guide
+    displayname: Downstream Analysis - Hitchhiker Statistics Guide
+    viewname: downstreamhitchhiker
+    displaytype: linkout
+    parameters:
+        baseurl: https://fbmn-statsguide.gnps2.org/Data_Preparation
+
 -   name: Downstream Analysis - Run Transitive Alignments
     displayname: Downstream Analysis - Run Transitive Alignments
     viewname: downstreamtransitive
