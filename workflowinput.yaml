@@ -72,6 +72,19 @@ parameterlist:
         - value: AGILENT2
           display: AGILENT2
 
+    - displayname: Raw Data Selection
+      paramtype: section
+
+    - displayname: Input Raw Data Folder (Optional)
+      paramtype: fileselector
+      nf_paramname: input_raw_spectra
+      formplaceholder: Enter the path to data
+      formvalue: ""
+      targettaskfolder: input_raw_spectra
+      optional: true
+      selectsinglefile: false
+      folderunroll: true
+
     - displayname: General Parameters
       paramtype: section
 
