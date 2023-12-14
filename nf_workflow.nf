@@ -7,6 +7,9 @@ params.featurefindingtool = "MZMINE"
 params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
 params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"
 
+// Normalization
+params.normalization = "None" // Can also be RowSum, None
+
 // Metadata
 params.metadata_filename = "data/mzmine2/gnps_featurefinding/metadata.tsv"
 
@@ -74,7 +77,8 @@ process quantification_table_reformatted {
     $input_features \
     featuretable_reformated.csv \
     $input_spectra \
-    specs_ms.mgf
+    specs_ms.mgf \
+    --QUANT_FILE_NORM $params.normalization
     """
 }
 

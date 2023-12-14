@@ -172,3 +172,15 @@ parameterlist:
       formplaceholder: Enter the topk
       formvalue: "1"
     
+    - displayname: Normalization Parameters
+      paramtype: section
+
+    - displayname: Quantification Normalization
+      paramtype: select
+      nf_paramname: normalization
+      formvalue: "None"
+      options:
+        - value: "None"
+          display: "None"
+        - value: "RowSum"
+          display: "RowSum"
