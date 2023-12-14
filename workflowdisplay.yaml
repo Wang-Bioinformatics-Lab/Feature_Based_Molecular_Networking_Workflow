@@ -175,6 +175,13 @@ Views:
     parameters:
         filename: nf_output/clustering/spectra_reformatted.mgf
 
+-   name: Download Quantification File
+    displayname: Download Quantification File
+    viewname: quantificationdownload
+    displaytype: download
+    parameters:
+        filename: nf_output/clustering/featuretable_reformated.csv
+
 -   name: section
     displayname: Downstream Analysis
     viewname: section
