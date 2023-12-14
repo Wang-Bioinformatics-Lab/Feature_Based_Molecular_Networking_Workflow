@@ -63,6 +63,8 @@ process filesummary {
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
+    errorStrategy 'ignore'
+
     input:
     file inputSpectra
     val ready
