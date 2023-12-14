@@ -7,6 +7,12 @@ params.featurefindingtool = "MZMINE"
 params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
 params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"
 
+// Raw Data Including
+params.input_raw_spectra = ""
+
+// Normalization
+params.normalization = "None" // Can also be RowSum, None
+
 // Metadata
 params.metadata_filename = "data/mzmine2/gnps_featurefinding/metadata.tsv"
 
@@ -52,6 +58,25 @@ params.OMETAPARAM_YAML = "job_parameters.yaml"
 TOOL_FOLDER = "$baseDir/bin"
 
 
+process filesummary {
+    publishDir "./nf_output/filesummary", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    errorStrategy 'ignore'
+
+    input:
+    file inputSpectra
+    val ready
+
+    output:
+    file 'summaryresult.tsv'
+
+    """
+    python $TOOL_FOLDER/scripts/filesummary.py $inputSpectra summaryresult.tsv $TOOL_FOLDER/binaries/msaccess
+    """
+}
+
 // Define the process that will reformat the quantification table
 process quantification_table_reformatted {
 
@@ -74,7 +99,8 @@ process quantification_table_reformatted {
     $input_features \
     featuretable_reformated.csv \
     $input_spectra \
-    specs_ms.mgf
+    specs_ms.mgf \
+    --QUANT_FILE_NORM $params.normalization
     """
 }
 
@@ -330,9 +356,13 @@ process createNetworkGraphML {
 
 
 workflow {
-  
-    def input_features = Channel.fromPath(params.inputfeatures)
-    def input_spectra = Channel.fromPath(params.inputspectra)
+    // File Summary
+    input_spectra_ch = Channel.fromPath(params.input_raw_spectra)
+    filesummary(input_spectra_ch, 1)
+
+    // Converting the quantification table
+    input_features = Channel.fromPath(params.inputfeatures)
+    input_spectra = Channel.fromPath(params.inputspectra)
     (_features_reformatted_ch, _spectra_reformatted_ch)  =  quantification_table_reformatted(input_features, input_spectra)
 
     // Filter the spectra

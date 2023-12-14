@@ -53,11 +53,34 @@ Views:
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["#Scan#"]}&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:${row["SpectrumID"]}">View Mirror</a>
         `;}}]'
 
+-   name: Files Summary
+    displayname: Files Summary
+    viewname: filesummary
+    displaytype: datatable
+    parameters:
+        filename: nf_output/filesummary/summaryresult.tsv
+        columns:
+            -   title: "Visualize"
+                data: 
+            -   title: "Filename"
+                data: "Filename"
+            -   title: "Vendor"
+                data: "Vendor"
+            -   title: "Model"
+                data: "Model"
+            -   title: "MS1s"
+                data: "MS1s"
+            -   title: "MS2s"
+                data: "MS2s"
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <a target="_blank" href="https://dashboard.gnps2.org/?usi=mzspec:GNPS2:TASK-${task}-input_raw_spectra/${row["Filename"]}">View LCMS Run</a>
+        `;}}]'
 
 -   name: Network Pairs List
     displayname: Pairs List
     viewname: pairslist
-    displaytype: datatable
+    displaytype: datatable_serverbig
     parameters:
         filename: nf_output/networking/filtered_pairs.tsv
         columns:
@@ -151,6 +174,13 @@ Views:
     displaytype: download
     parameters:
         filename: nf_output/clustering/spectra_reformatted.mgf
+
+-   name: Download Quantification File
+    displayname: Download Quantification File
+    viewname: quantificationdownload
+    displaytype: download
+    parameters:
+        filename: nf_output/clustering/featuretable_reformated.csv
 
 -   name: section
     displayname: Downstream Analysis
