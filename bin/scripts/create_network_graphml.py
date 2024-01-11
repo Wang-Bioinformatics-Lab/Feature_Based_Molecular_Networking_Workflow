@@ -7,6 +7,7 @@ import os
 import molecular_network_filtering_library
 import networkx as nx
 import argparse
+import glob
 
 
 def convert_network(G):
@@ -92,6 +93,7 @@ def main():
     parser.add_argument('input_clusterinfo_summary', help='input_clusterinfo_summary')
     parser.add_argument('input_pairs', help='input_pairs')
     parser.add_argument('input_library_matches', help='input_library_matches')
+    parser.add_argument('input_supplemental_edges_folder', help='input_supplemental_edges_folder')
     parser.add_argument('output_graphml', help='output_graphml')
     parser.add_argument('output_with_singleton_graphml', help='output_with_singleton_graphml')
 
@@ -119,6 +121,14 @@ def main():
 
     molecular_network_filtering_library.add_clusterinfo_summary_to_graph(G, args.input_clusterinfo_summary)
     molecular_network_filtering_library.add_library_search_results_to_graph(G, args.input_library_matches)
+
+    # Adding supplemental edges if there are any available
+    all_supplemental_files = glob.glob(os.path.join(args.input_supplemental_edges_folder, "*"))
+    for supplemental_file_path in all_supplemental_files:
+        try:
+            G = molecular_network_filtering_library.add_additional_edges(G, supplemental_file_path)
+        except:
+            print("ERROR: Adding supplemental edges failed", supplemental_file_path)
 
     # Cleaning up network when the clusterinfo summary is not present 
 
