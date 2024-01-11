@@ -7,6 +7,9 @@ params.featurefindingtool = "MZMINE"
 params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
 params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"
 
+// Additional IIN Edges
+params.input_supplemental_edges = ""
+
 // Raw Data Including
 params.input_raw_spectra = ""
 
@@ -339,6 +342,7 @@ process createNetworkGraphML {
     file input_clustersummary
     file input_filtered_pairs
     file input_library_matches
+    file input_supplemental_edges
 
     output:
     file "network.graphml"
@@ -349,6 +353,7 @@ process createNetworkGraphML {
     $input_clustersummary \
     $input_filtered_pairs \
     $input_library_matches \
+    $input_supplemental_edges \
     network.graphml \
     network_singletons.graphml
     """
@@ -406,7 +411,10 @@ workflow {
     // // Adding component and library informaiton
     clustersummary_with_network_ch = enrichClusterSummary(clustersummary_with_groups_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
 
+    // Supplemental Edges
+    supplemental_edges_ch = Channel.fromPath(params.input_supplemental_edges)
+
     // // Creating the graphml Network
-    createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch)
+    createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch, supplemental_edges_ch)
 
 }

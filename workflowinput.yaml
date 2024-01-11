@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "0.1.5"
+workflowversion: "0.1.6"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -71,6 +71,19 @@ parameterlist:
           display: OPTIMUS
         - value: AGILENT2
           display: AGILENT2
+
+    - displayname: Additional Edges
+      paramtype: section
+
+    - displayname: Input Additional Supplemental Edges File(s) (Optional)
+      paramtype: fileselector
+      nf_paramname: input_supplemental_edges
+      formplaceholder: Enter the path to supplemental edges
+      formvalue: ""
+      targettaskfolder: input_supplemental_edges
+      optional: true
+      selectsinglefile: false
+      folderunroll: true
 
     - displayname: Raw Data Selection
       paramtype: section
