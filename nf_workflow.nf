@@ -58,11 +58,13 @@ params.OMETALINKING_YAML = "flow_filelinking.yaml"
 params.OMETAPARAM_YAML = "job_parameters.yaml"
 
 // Set the path to the tool folder
+
+params.publishdir = "$baseDir"
 TOOL_FOLDER = "$baseDir/bin"
 
 
 process filesummary {
-    publishDir "./nf_output/filesummary", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/filesummary", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -83,7 +85,7 @@ process filesummary {
 // Define the process that will reformat the quantification table
 process quantification_table_reformatted {
 
-    publishDir "./nf_output/clustering", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/clustering", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -110,7 +112,7 @@ process quantification_table_reformatted {
 
 process filter_spectra{
 
-    publishDir "./nf_output/clustering", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/clustering", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -136,7 +138,7 @@ process filter_spectra{
 
 // Molecular Networking
 process networkingGNPSPrepParams {
-    publishDir "./nf_output/networking", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -161,7 +163,7 @@ process networkingGNPSPrepParams {
 }
 
 process calculatePairs {
-    publishDir "./nf_output/temp_pairs", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/temp_pairs", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -183,7 +185,7 @@ process calculatePairs {
 
 // Filtering the network
 process filterNetwork {
-    publishDir "./nf_output/networking", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -204,7 +206,7 @@ process filterNetwork {
 // Creating the metadata file
 // TODO: Finish this
 process createMetadataFile {
-    publishDir "./nf_output/metadata", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/metadata", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -224,7 +226,7 @@ process createMetadataFile {
 
 // Calculating the groupings
 process calculateGroupings {
-    publishDir "./nf_output/networking", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -270,7 +272,7 @@ process librarySearchData {
 }
 
 process librarymergeResults {
-    publishDir "./nf_output/library_intermediate", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/library_intermediate", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -290,7 +292,7 @@ process librarymergeResults {
 }
 
 process librarygetGNPSAnnotations {
-    publishDir "./nf_output/library", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/library", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -310,7 +312,7 @@ process librarygetGNPSAnnotations {
 
 // Enriching the Cluster Summary
 process enrichClusterSummary {
-    publishDir "./nf_output/networking", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -332,7 +334,7 @@ process enrichClusterSummary {
 }
 
 process createNetworkGraphML {
-    publishDir "./nf_output/networking", mode: 'copy'
+    publishDir "$params.publishdir/nf_output/networking", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
