@@ -294,10 +294,14 @@ process librarymergeResults {
 process librarygetGNPSAnnotations {
     publishDir "$params.publishdir/nf_output/library", mode: 'copy'
 
+    //cache 'lenient'
+    cache 'false'
+
     conda "$TOOL_FOLDER/conda_env.yml"
 
     input:
     path "merged_results.tsv"
+    path "library_summary.tsv"
 
     output:
     path 'merged_results_with_gnps.tsv'
@@ -305,7 +309,8 @@ process librarygetGNPSAnnotations {
     """
     python $TOOL_FOLDER/scripts/getGNPS_library_annotations.py \
     merged_results.tsv \
-    merged_results_with_gnps.tsv
+    merged_results_with_gnps.tsv \
+    --librarysummary library_summary.tsv
     """
 }
 
@@ -361,6 +366,26 @@ process createNetworkGraphML {
     """
 }
 
+process summaryLibrary {
+    publishDir "$params.publishdir/nf_output", mode: 'copy'
+
+    cache 'lenient'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    path library_file
+
+    output:
+    path '*.tsv' optional true
+
+    """
+    python $TOOL_FOLDER/scripts/library_summary.py \
+    $library_file \
+    ${library_file}.tsv
+    """
+}
+
 
 workflow {
     // File Summary
@@ -381,7 +406,15 @@ workflow {
     merged_results_ch = librarymergeResults(search_results_ch.collect())
     merged_results_ch = merged_results_ch.ifEmpty(file("NO_FILE"))
 
-    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch)
+    // Lets create a summary for the library files
+    library_summary_ch = summaryLibrary(libraries_ch)
+
+    // Merging all these tsv files from library_summary_ch within nextflow
+    library_summary_merged_ch = library_summary_ch.collectFile(name: "library_summary.tsv", keepHeader: true)
+    library_summary_merged_ch = library_summary_merged_ch.ifEmpty(file("NO_FILE"))
+
+    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch, library_summary_merged_ch)
+    gnps_library_results_ch = gnps_library_results_ch.ifEmpty(file("NO_FILE"))
 
     // Networking
     params_ch = networkingGNPSPrepParams(_spectra_filtered_ch)
