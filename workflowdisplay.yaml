@@ -39,7 +39,7 @@ Views:
             -   title: "Ion"
                 data: Ion_Source
             -   title: "Precursor m/z"
-                data: Precursor_MZ
+                data: SpecMZ
             -   title: "Cosine"
                 data: MQScore
             -   title: "Shared Peaks"
