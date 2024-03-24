@@ -48,10 +48,16 @@ Views:
                 data: MassDiff
             -   title: "SpectrumID"
                 data: SpectrumID
+            -   title: "Smiles"
+                data: Smiles
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["#Scan#"]}&usi2=mzspec:GNPS:GNPS-LIBRARY:accession:${row["SpectrumID"]}">View Mirror</a>
-        `;}}]'
+        `;}},
+        {"targets": 9,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <img src="https://structure.gnps2.org/structureimg?smiles=${row["Smiles"]}"/>
+        `;}},]'
 
 -   name: Files Summary
     displayname: Files Summary
