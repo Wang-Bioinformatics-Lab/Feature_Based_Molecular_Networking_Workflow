@@ -67,6 +67,8 @@ parameterlist:
           display: METABOSCAPE
         - value: MSDIAL
           display: MSDIAL
+        - value: MSDIAL5
+          display: MSDIAL5
         - value: OPTIMUS
           display: OPTIMUS
         - value: AGILENT2
