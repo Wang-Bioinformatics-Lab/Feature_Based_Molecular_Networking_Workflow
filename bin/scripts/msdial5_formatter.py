@@ -25,7 +25,7 @@ def convert_to_feature_csv(input_filename, output_filename):
     output_records = []
 
     for record in input_records:
-        scan = record["Alignment ID"]
+        scan = int(record["Alignment ID"]) + 1
         mz = record["Average Mz"]
         rt = record["Average Rt(min)"]
 
