@@ -73,8 +73,16 @@ def convert_mgf(input_mgf, output_mgf):
                 # writing out precursor m/z
                 out.write("PEPMASS={}\n".format(spectrum["params"]["pepmass"][0]))
 
-                for mz, intensity in zip(spectrum["m/z array"], spectrum["intensity array"]):
-                    out.write("{:.4f} {:.4f}\n".format(mz, intensity))
+                # Figuring out the max intensity and keeping only things above 1% base peak
+                try:
+                    max_intensity = max(spectrum["intensity array"])
+
+                    for mz, intensity in zip(spectrum["m/z array"], spectrum["intensity array"]):
+                        ratio = intensity / max_intensity
+                        if ratio > 0.01:
+                            out.write("{:.4f} {:.4f}\n".format(mz, intensity))
+                except:
+                    pass
 
                 out.write("END IONS\n\n".format(scan))
 

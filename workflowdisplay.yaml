@@ -121,8 +121,8 @@ Views:
     parameters:
         baseurl: /dashboards/networkviewer
         urlparam:
-            -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network.graphml
-            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/spectra_reformatted.mgf
+            -   usi:mzdata:GNPS2:TASK-[task]-nf_output/networking/network.graphml
+            -   usi-mgf:mzdata:GNPS2:TASK-[task]-nf_output/clustering/spectra_reformatted.mgf
 
 -   name: Visualize Network w/ Singletons in Browser
     displayname: Visualize Full Network w/ Singletons in Browser
@@ -131,8 +131,8 @@ Views:
     parameters:
         baseurl: /dashboards/networkviewer
         urlparam:
-            -   usi:mzdata:OMETATASK-[task]:nf_output/networking/network_singletons.graphml
-            -   usi-mgf:mzdata:OMETATASK-[task]:nf_output/clustering/spectra_reformatted.mgf
+            -   usi:mzdata:GNPS2:TASK-[task]-nf_output/networking/network_singletons.graphml
+            -   usi-mgf:mzdata:GNPS2:TASK-[task]-nf_output/clustering/spectra_reformatted.mgf
 
 
 -   name: Export Network in Cytoscape
