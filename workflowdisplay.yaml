@@ -109,6 +109,33 @@ Views:
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID1"]}&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID2"]}">View Mirror</a>
         `;}}]'
 
+-   name: Network Unfiltered Pairs List
+    displayname: Pairs Unfiltered List
+    viewname: unfilteredpairslist
+    displaytype: datatable_serverbig
+    parameters:
+        filename: nf_output/networking/merged_pairs.tsv
+        columns:
+            -   title: "View"
+                data: 
+            -   title: "CLUSTERID1"
+                data: CLUSTERID1
+            -   title: "CLUSTERID2"
+                data: CLUSTERID2
+            -   title: "DeltaMZ"
+                data: DeltaMZ
+            -   title: "DeltaMZ"
+                data: DeltaMZ
+            -   title: "Cosine"
+                data: Cosine
+            -   title: "MatchedPeaks"
+                data: MatchedPeaks
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        return `
+            <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID1"]}&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID2"]}">View Mirror</a>
+        `;}}]'
+
+
 -   name: section
     displayname: Network Visualizations
     viewname: section
