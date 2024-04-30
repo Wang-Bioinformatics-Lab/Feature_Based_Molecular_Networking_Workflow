@@ -33,7 +33,16 @@ def main():
             all_results_list.append(temp_df)
     
     # merging results
-    all_results_df = pd.concat(all_results_list, ignore_index=True)
+    try:
+        all_results_df = pd.concat(all_results_list, ignore_index=True)
+    except:
+        all_results_df = pd.DataFrame()
+        
+        # writing out
+        all_results_df.to_csv(args.output_file, sep="\t", index=False)
+
+        # exit
+        exit(0)
 
     # Filtering when appropriate
     if args.topk is not None:
