@@ -45,6 +45,9 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     if "filename" not in metadata_df.columns:
         raise Exception("Metadata does not contain filename column")
     
+    # Filtering metadata rows where filename is NaN
+    metadata_df = metadata_df[metadata_df["filename"].notnull()]
+
     # Cleaning metadata
     metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x).rstrip())
 
