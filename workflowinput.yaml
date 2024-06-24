@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "2024.05.29"
+workflowversion: "2024.06.24"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
