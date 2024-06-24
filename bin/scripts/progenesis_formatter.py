@@ -82,7 +82,8 @@ def convert_to_feature_csv(input_filename, output_filename):
     output_df = pd.DataFrame(output_records)
 
     # We are dropping the Raw abundance columns (that have a suffixe .1) keeping only the Normalized abundance column
-    output_df = output_df.drop([x for x in output_df if x.endswith('.1')], 1)
+    raw_abundance_columns = [x for x in output_df if x.endswith('.1')]
+    output_df = output_df.drop(labels=raw_abundance_columns, axis=1)
 
     output_df2 = pd.DataFrame(output_records2)
     output_df_prepared = pd.concat([output_df, output_df2], axis=1)
