@@ -284,4 +284,5 @@ Views:
         hashparam:
             -   gnps2_graphml:TASKLOCATION/[task]/nf_output/networking/network_singletons.graphml
             -   gnps2_mgf:TASKLOCATION/[task]/nf_output/clustering/spectra_reformatted.mgf
+            -   datasource:GNPS2
             -   description:Downstream from [task] Feature Based Molecular Networking
