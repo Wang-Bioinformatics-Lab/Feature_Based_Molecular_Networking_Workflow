@@ -275,7 +275,7 @@ Views:
 # CMMC Linkouts
 -   name: Downstream Analysis - CMMC Enrichment Analysis
     displayname: Downstream Analysis - CMMC Enrichment Analysis
-    viewname: downstreamocmmc
+    viewname: downstreamcmmc
     displaytype: linkout
     parameters:
         baseurl: /workflowinput
