@@ -270,3 +270,18 @@ Views:
             -   input_graphml:TASKLOCATION/[task]/nf_output/networking/network_singletons.graphml
             -   input_mgf:TASKLOCATION/[task]/nf_output/clustering/spectra_reformatted.mgf
             -   description:Downstream from [task] Feature Based Molecular Networking
+
+
+# CMMC Linkouts
+-   name: Downstream Analysis - CMMC Enrichment Analysis
+    displayname: Downstream Analysis - CMMC Enrichment Analysis
+    viewname: downstreamocmmc
+    displaytype: linkout
+    parameters:
+        baseurl: /workflowinput
+        urlparam:
+            -   workflowname:cmmc_gnps_network_enrichment_workflow
+        hashparam:
+            -   gnps2_graphml:TASKLOCATION/[task]/nf_output/networking/network_singletons.graphml
+            -   gnps2_mgf:TASKLOCATION/[task]/nf_output/clustering/spectra_reformatted.mgf
+            -   description:Downstream from [task] Feature Based Molecular Networking
