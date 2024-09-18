@@ -39,6 +39,10 @@ params.networking_min_matched_peaks = 6
 params.networking_min_cosine = 0.7
 params.networking_max_shift = 1000
 
+// Topology Filtering
+params.topology_topk = 10
+params.topology_maxcomponent = 100
+
 // Library Search Parameters
 params.library_topk = 1
 
@@ -199,7 +203,9 @@ process filterNetwork {
     python $TOOL_FOLDER/scripts/filter_networking_edges.py \
     $input_pairs \
     filtered_pairs.tsv \
-    filtered_pairs_old_format.tsv
+    filtered_pairs_old_format.tsv  \
+    --top_k_val $params.topology_topk \
+    --max_component_size $params.topology_maxcomponent
     """
 }
 

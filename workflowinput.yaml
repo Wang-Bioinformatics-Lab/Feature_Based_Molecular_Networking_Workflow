@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "2024.08.07"
+workflowversion: "2024.09.18"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -167,6 +167,22 @@ parameterlist:
       nf_paramname: networking_max_shift
       formplaceholder: Enter the networking_max_shift
       formvalue: "1999"
+
+    
+    - displayname: Network Topology Parameters
+      paramtype: section
+
+    - displayname: Classic Param - Top K
+      paramtype: text
+      nf_paramname: topology_topk
+      formplaceholder: Enter the topology_topk
+      formvalue: "10"
+
+    - displayname: Classic Param - Max Component Size
+      paramtype: text
+      nf_paramname: topology_maxcomponent
+      formplaceholder: Enter the topology_maxcomponent
+      formvalue: "100"
 
     - displayname: Library Search Parameters
       paramtype: section
