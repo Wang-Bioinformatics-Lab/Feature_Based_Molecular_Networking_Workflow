@@ -14,10 +14,13 @@ def main():
     parser.add_argument('networking_pairs_results_file', help='networking_pairs_results_file')
     parser.add_argument('networking_pairs_results_file_filtered', help='networking_pairs_results_file_filtered')
     parser.add_argument('networking_pairs_results_file_filtered_classic_output', help='networking_pairs_results_file_filtered_classic_output')
+    parser.add_argument('--top_k_val', help='top_k_val', default=10, type=int)
+    parser.add_argument('--max_component_size', help='max_component_size', default=100, type=int)
+
     args = parser.parse_args()
 
-    top_k_val = 10
-    max_component_size = 100
+    top_k_val = args.top_k_val
+    max_component_size = args.max_component_size
 
     G = molecular_network_filtering_library.loading_network(args.networking_pairs_results_file, hasHeaders=True)
     if G == None:
