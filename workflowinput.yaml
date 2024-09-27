@@ -71,6 +71,8 @@ parameterlist:
           display: MSDIAL5
         - value: OPTIMUS
           display: OPTIMUS
+        - value: AGILENT
+          display: AGILENT (Legacy)
         - value: AGILENT2
           display: AGILENT2
 
@@ -120,31 +122,31 @@ parameterlist:
     - displayname: Advanced Filtering Parameters
       paramtype: section
 
-    - displayname: Min Peak Intensity
-      paramtype: text
-      nf_paramname: min_peak_intensity
-      formplaceholder: Enter the min_peak_intensity
-      formvalue: "0.0"
-      tooltip: "min_peak_intensity"
+    # - displayname: Min Peak Intensity
+    #   paramtype: text
+    #   nf_paramname: min_peak_intensity
+    #   formplaceholder: Enter the min_peak_intensity
+    #   formvalue: "0.0"
+    #   tooltip: "min_peak_intensity"
     
     - displayname: Window Filter
       paramtype: select
       nf_paramname: window_filter
-      formvalue: "yes"
+      formvalue: "1"
       options:
-        - value: "yes"
+        - value: "1"
           display: "yes"
-        - value: "no"
+        - value: "0"
           display: "no"
 
     - displayname: Precursor Window Filter
       paramtype: select
       nf_paramname: precursor_filter
-      formvalue: "yes"
+      formvalue: "1"
       options:
-        - value: "yes"
+        - value: "1"
           display: "yes"
-        - value: "no"
+        - value: "0"
           display: "no"
 
     - displayname: Networking Parameters

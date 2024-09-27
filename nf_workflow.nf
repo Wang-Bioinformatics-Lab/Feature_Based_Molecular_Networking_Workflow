@@ -22,14 +22,13 @@ params.metadata_filename = "data/mzmine2/gnps_featurefinding/metadata.tsv"
 // Libraries
 params.input_libraries = "data/library"
 
-// Parameters
-params.min_cluster_size = "2"
-
 params.pm_tolerance = "2.0"
 params.fragment_tolerance = "0.5"
 
-// Filtereing
-params.min_peak_intensity = "0.0"
+// Filtering Parameters
+params.min_peak_intensity = "0.0" // This is a no op now
+params.precursor_filter = "1"
+params.window_filter = "1"
 
 // Molecular Networking Options
 params.similarity = "gnps"
@@ -131,8 +130,8 @@ process filter_spectra{
     script:
     """
     python $TOOL_FOLDER/scripts/filter_spectra.py \
-    --FILTER_PRECURSOR_WINDOW 0 \
-    --WINDOW_FILTER 0 \
+    --FILTER_PRECURSOR_WINDOW ${params.precursor_filter} \
+    --WINDOW_FILTER ${params.window_filter} \
     $_reformatted_spectra_ch \
     spectra_reformatted.mgf \
     spectra_filtered.mgf 
