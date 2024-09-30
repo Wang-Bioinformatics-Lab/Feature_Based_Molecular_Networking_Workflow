@@ -139,6 +139,39 @@ Views:
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID1"]}&usi2=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["CLUSTERID2"]}">View Mirror</a>
         `;}}]'
 
+# Creating all features tall table
+-   name: All Quantification Features
+    displayname: All Quantification Features
+    viewname: allfeaturestall
+    displaytype: datatable_serverbig
+    parameters:
+        filename: nf_output/clustering/tall_raw_data.tsv
+        columns:
+            -   title: "View"
+                data: 
+            -   title: "Feature ID"
+                data: "row ID"
+            -   title: "filename"
+                data: filename
+            -   title: "area"
+                data: area
+            -   title: "m/z"
+                data: "row m/z"
+            -   title: "rt"
+                data: "row retention time"
+            -   title: "Has Raw Data"
+                data: raw_data
+        columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
+        // If raw data is 1, then lets link, otherwise no link
+
+        if(row["raw_data"] == 1) {
+            return `
+                <a target="_blank" href="https://dashboard.gnps2.org/?usi=mzspec:GNPS2:TASK-${task}-input_raw_spectra/${row["filename"]}&xic_mz=${row["row m/z"]}&xic_rt_window=${row["row retention time"]}">View LCMS Run</a>
+            `;
+        } else {
+            return `No Original mzML Data`;
+        }
+        }}]'
 
 -   name: section
     displayname: Network Visualizations

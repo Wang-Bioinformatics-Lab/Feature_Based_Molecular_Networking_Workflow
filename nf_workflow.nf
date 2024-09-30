@@ -391,6 +391,28 @@ process summaryLibrary {
     """
 }
 
+process createTallRawData {
+    publishDir "$params.publishdir/nf_output/clustering", mode: 'copy'
+
+    errorStrategy 'ignore'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    path input_reformatted_quant
+    path input_raw_spectra
+
+
+    output:
+    path 'tall_raw_data.tsv'
+
+    """
+    python $TOOL_FOLDER/scripts/create_tall_quant.py \
+    $input_reformatted_quant \
+    $input_raw_spectra \
+    tall_raw_data.tsv
+    """
+}
 
 workflow {
     // File Summary
@@ -456,5 +478,8 @@ workflow {
 
     // // Creating the graphml Network
     createNetworkGraphML(clustersummary_with_network_ch, filtered_networking_pairs_ch, gnps_library_results_ch, supplemental_edges_ch)
+
+    // Creating the tall quant table
+    createTallRawData(_features_reformatted_ch, input_spectra_ch)
 
 }
