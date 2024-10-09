@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "2024.09.30"
+workflowversion: "2024.10.09"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -212,11 +212,18 @@ parameterlist:
         - value: "1"
           display: "Yes"
 
+    - displayname: Analog Search Max Shift
+      paramtype: text
+      nf_paramname: library_analog_max_shift
+      formplaceholder: Enter the max mass shift
+      formvalue: "1999"
+
     - displayname: Top-K
       paramtype: text
       nf_paramname: library_topk
       formplaceholder: Enter the topk
       formvalue: "1"
+    
     
     - displayname: Normalization Parameters
       paramtype: section

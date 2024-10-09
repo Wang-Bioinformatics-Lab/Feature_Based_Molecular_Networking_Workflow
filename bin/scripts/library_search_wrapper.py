@@ -17,7 +17,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
     pm_tolerance=2.0, 
     ion_tolerance=0.5, 
     analog_search=0, 
-    max_shift_mass=0.5):
+    max_shift_mass=1999):
 
 
     parameter_filename = os.path.join(temp_folder, str(uuid.uuid4()) + ".params")
@@ -29,7 +29,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
     output_parameter_file.write("search_peak_tolerance={}\n".format(ion_tolerance))
     output_parameter_file.write("search_parentmass_tolerance={}\n".format(pm_tolerance))
     output_parameter_file.write("ANALOG_SEARCH={}\n".format(analog_search))
-    output_parameter_file.write("MAX_SHIFT_MASS={}\n".format(1999))
+    output_parameter_file.write("MAX_SHIFT_MASS={}\n".format(max_shift_mass))
 
     #Filtering Criteria
     output_parameter_file.write("FILTER_PRECURSOR_WINDOW={}\n".format(1))
@@ -98,6 +98,7 @@ def main():
     parser.add_argument('--topk', default=1, help='topk')
 
     parser.add_argument('--analog_search', default=0, help='Turn on analog search, 0 or 1', type=int)
+    parser.add_argument('--library_analog_max_shift', default=1999, help='Max Analog Library Search delta', type=float)
 
 
     args = parser.parse_args()
@@ -125,7 +126,8 @@ def main():
         top_k_results=args.topk, 
         pm_tolerance=args.pm_tolerance,
         ion_tolerance=args.fragment_tolerance,
-        analog_search=args.analog_search)
+        analog_search=args.analog_search,
+        max_shift_mass=args.library_analog_max_shift)
 
     # Reformatting the output
     output_results_file = os.path.join(args.result_folder, os.path.basename(args.spectrum_file) + "_" + os.path.basename(args.library_file) + ".tsv")

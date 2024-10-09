@@ -48,13 +48,12 @@ params.library_topk = 1
 params.library_min_cosine = 0.7
 params.library_min_matched_peaks = 6
 
+params.library_analog_search = "0"
+params.library_analog_max_shift = 1999
+
 //TODO: Implement This
 params.library_filter_precursor = 1
 params.library_filter_window = 1
-
-//TODO: Implement This
-params.library_analog_search = "0"
-params.library_analog_max_shift = 1999
 
 // Define the paths to the required YAML files
 params.OMETALINKING_YAML = "flow_filelinking.yaml"
@@ -272,7 +271,8 @@ process librarySearchData {
     --topk $params.library_topk \
     --library_min_cosine $params.library_min_cosine \
     --library_min_matched_peaks $params.library_min_matched_peaks \
-    --analog_search $params.library_analog_search
+    --analog_search $params.library_analog_search \
+    --library_analog_max_shift $params.library_analog_max_shift
     """
 }
 
