@@ -9,15 +9,21 @@ import sys
 
 def convert_to_feature_csv(input_filename, output_filename):
     # First read the table and deduce the number of samples from the difference between Norm abundance and RAW abundance (skiprows=0)
-    input_format_for_raw_position = pd.read_csv(input_filename, sep=",", skiprows=0)
-    index_RAW = input_format_for_raw_position.columns.get_loc('Raw abundance')
-    index_Norm = input_format_for_raw_position.columns.get_loc('Normalised abundance')
-    assumed_number_of_samples = len(input_format_for_raw_position.iloc[:,index_Norm:index_RAW].columns)
+    
+    try:
+        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=",", skiprows=0)
+    except:
+        # This might be a problem for formats, the new version is semi colon separated
+        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=";", decimal=',', skiprows=0)
+
+    index_RAW = input_format_for_raw_position_df.columns.get_loc('Raw abundance')
+    index_Norm = input_format_for_raw_position_df.columns.get_loc('Normalised abundance')
+    assumed_number_of_samples = len(input_format_for_raw_position_df.iloc[:,index_Norm:index_RAW].columns)
 
     #Check requirements for the table
     required_names = ["Raw abundance", "Normalised abundance"]
     for require_name in required_names:
-        if not require_name in input_format_for_raw_position:
+        if not require_name in input_format_for_raw_position_df:
             raise Exception("Missing Column, please verify the format on the Progenesis QI {}".format(require_name))
 
     # Now read again the table for the samples and metadata column name (skiprows=2)
