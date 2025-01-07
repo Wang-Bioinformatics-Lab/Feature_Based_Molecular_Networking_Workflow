@@ -13,7 +13,7 @@ def convert_to_feature_csv(input_filename, output_filename):
     try:
         input_format_for_raw_position_df = pd.read_csv(input_filename, sep=",", skiprows=0)
     except:
-        # This might be a problem for formats, the new version is semi colon separated
+        # This might be a problem for formats, the new version is semi colon separated and also european decimals
         input_format_for_raw_position_df = pd.read_csv(input_filename, sep=";", decimal=',', skiprows=0)
 
     index_RAW = input_format_for_raw_position_df.columns.get_loc('Raw abundance')
@@ -27,26 +27,30 @@ def convert_to_feature_csv(input_filename, output_filename):
             raise Exception("Missing Column, please verify the format on the Progenesis QI {}".format(require_name))
 
     # Now read again the table for the samples and metadata column name (skiprows=2)
-    input_format = pd.read_csv(input_filename, sep=",", skiprows=2, encoding ='utf-8')
+    try:
+        input_format_df = pd.read_csv(input_filename, sep=",", skiprows=2, encoding ='utf-8')
+    except:
+        # This might be a problem for formats, the new version is semi colon separated and also european decimals
+        input_format_df = pd.read_csv(input_filename, sep=";", skiprows=2, decimal=',', encoding ='utf-8')
 
     #Check requirements for the table
     required_names = ["Compound", "Retention time (min)", "m/z"]
     for require_name in required_names:
-        if not require_name in input_format:
+        if not require_name in input_format_df:
             raise Exception("Missing Column, please verify the format on the Progenesis QI {}".format(require_name))
 
     #Get the metadata columns before samples
-    columns_left = input_format.iloc[:,:index_Norm].columns.tolist()
+    columns_left = input_format_df.iloc[:,:index_Norm].columns.tolist()
     #Get the metadata columns after the samples
     columns_right_index = index_Norm+assumed_number_of_samples
-    columns_right = input_format.iloc[:,columns_right_index:].columns.tolist()
+    columns_right = input_format_df.iloc[:,columns_right_index:].columns.tolist()
     non_sample_names = columns_left + columns_right
 
     #delimiting the samples
-    sample_names = [header for header in input_format.keys() if not header in non_sample_names and not header[-2:] == ".1"]
+    sample_names = [header for header in input_format_df.keys() if not header in non_sample_names and not header[-2:] == ".1"]
 
     #Making a dictionary
-    input_records = input_format.to_dict(orient="records")
+    input_records = input_format_df.to_dict(orient="records")
 
     output_records = []
     output_records2 = []
