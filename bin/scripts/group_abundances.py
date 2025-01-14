@@ -48,6 +48,9 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     # Filtering metadata rows where filename is NaN
     metadata_df = metadata_df[metadata_df["filename"].notnull()]
 
+    # Making sure its a string
+    metadata_df["filename"] = metadata_df["filename"].apply(lambda x: str(x))
+
     # Cleaning metadata
     metadata_df["filename"] = metadata_df["filename"].apply(lambda x: os.path.basename(x).rstrip())
 
