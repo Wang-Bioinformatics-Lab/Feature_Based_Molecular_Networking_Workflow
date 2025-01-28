@@ -10,11 +10,16 @@ import sys
 def convert_to_feature_csv(input_filename, output_filename):
     # First read the table and deduce the number of samples from the difference between Norm abundance and RAW abundance (skiprows=0)
     
+    delimiter = ","
+    decimal_separator = "."
+
     try:
-        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=",", skiprows=0)
+        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=delimiter, decimal=decimal_separator, skiprows=0)
     except:
         # This might be a problem for formats, the new version is semi colon separated and also european decimals
-        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=";", decimal=',', skiprows=0)
+        delimiter = ";"
+        decimal_separator = ","
+        input_format_for_raw_position_df = pd.read_csv(input_filename, sep=delimiter, decimal=decimal_separator, skiprows=0)
 
     index_RAW = input_format_for_raw_position_df.columns.get_loc('Raw abundance')
     index_Norm = input_format_for_raw_position_df.columns.get_loc('Normalised abundance')
@@ -27,16 +32,14 @@ def convert_to_feature_csv(input_filename, output_filename):
             raise Exception("Missing Column, please verify the format on the Progenesis QI {}".format(require_name))
 
     # Now read again the table for the samples and metadata column name (skiprows=2)
-    try:
-        input_format_df = pd.read_csv(input_filename, sep=",", skiprows=2, encoding ='utf-8')
-    except:
-        # This might be a problem for formats, the new version is semi colon separated and also european decimals
-        input_format_df = pd.read_csv(input_filename, sep=";", skiprows=2, decimal=',', encoding ='utf-8')
+    # Parsing in a consistent way to above
+    input_format_df = pd.read_csv(input_filename, sep=delimiter, decimal=decimal_separator, skiprows=2, encoding ='utf-8')
 
     #Check requirements for the table
     required_names = ["Compound", "Retention time (min)", "m/z"]
     for require_name in required_names:
         if not require_name in input_format_df:
+            print(input_format_df.columns, file=sys.stderr)
             raise Exception("Missing Column, please verify the format on the Progenesis QI, this column is missing: {}".format(require_name))
 
     #Get the metadata columns before samples
