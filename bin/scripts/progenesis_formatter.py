@@ -37,7 +37,7 @@ def convert_to_feature_csv(input_filename, output_filename):
     required_names = ["Compound", "Retention time (min)", "m/z"]
     for require_name in required_names:
         if not require_name in input_format_df:
-            raise Exception("Missing Column, please verify the format on the Progenesis QI {}".format(require_name))
+            raise Exception("Missing Column, please verify the format on the Progenesis QI, this column is missing: {}".format(require_name))
 
     #Get the metadata columns before samples
     columns_left = input_format_df.iloc[:,:index_Norm].columns.tolist()
