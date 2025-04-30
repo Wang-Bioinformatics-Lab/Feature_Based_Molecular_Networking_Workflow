@@ -98,7 +98,9 @@ process quantification_table_reformatted {
     output:
     path "featuretable_reformated.csv"
     path "specs_ms.mgf"
+    path "embedded_metadata.tsv", optional: true
 
+    
     script:
     """
     python $TOOL_FOLDER/scripts/reformat_quantification.py \
@@ -107,6 +109,7 @@ process quantification_table_reformatted {
     featuretable_reformated.csv \
     $input_spectra \
     specs_ms.mgf \
+    embedded_metadata.tsv \
     --QUANT_FILE_NORM $params.normalization
     """
 }
@@ -422,7 +425,7 @@ workflow {
     // Converting the quantification table
     input_features = Channel.fromPath(params.inputfeatures)
     input_spectra = Channel.fromPath(params.inputspectra)
-    (_features_reformatted_ch, _spectra_reformatted_ch)  =  quantification_table_reformatted(input_features, input_spectra)
+    (_features_reformatted_ch, _spectra_reformatted_ch, _embedded_metadata_ch)  =  quantification_table_reformatted(input_features, input_spectra)
 
     // Filter the spectra
     (_spectra_reformatted_ch2, _spectra_filtered_ch) = filter_spectra(_features_reformatted_ch, _spectra_reformatted_ch)
@@ -455,15 +458,24 @@ workflow {
     // Handling Metadata, if we don't have one, we'll set it to be empty
     if(params.metadata_filename.length() > 0){
         if(params.metadata_filename == "NO_FILE"){
-            input_metadata_ch = Channel.of(file("NO_FILE"))
+            if (params.featurefindingtool == "AGILENT_EXPLORER2") {
+                input_metadata_ch = _embedded_metadata_ch
+            } else {
+                input_metadata_ch = Channel.of(file("NO_FILE"))
+            }
         }
         else{
             input_metadata_ch = Channel.fromPath(params.metadata_filename).first()
         }
     }
     else{
-        input_metadata_ch = Channel.of(file("NO_FILE"))
+        if (params.featurefindingtool == "AGILENT_EXPLORER2") {
+            input_metadata_ch = _embedded_metadata_ch
+        } else {
+            input_metadata_ch = Channel.of(file("NO_FILE"))
+        }
     }
+    
 
     merged_metadata_ch = createMetadataFile(input_metadata_ch)
 

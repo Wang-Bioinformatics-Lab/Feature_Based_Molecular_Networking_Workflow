@@ -1,7 +1,7 @@
 import sys
 import argparse
 import pandas as pd
-from pfa_parser import (
+from .pfa_parser import (
     ReadPFAFile,
     GetSampleGroupingFromPFA,
     GetCompoundResultsFromPFA,
@@ -53,10 +53,18 @@ def reshape_compound_results(compound_results: List[Dict]) -> pd.DataFrame:
         f"{col} Peak area" if col not in ['row ID', 'row m/z', 'row retention time'] else col
         for col in df.columns
     ]
-    df.set_index('row ID', inplace=True)
+
     df.fillna(0.0, inplace=True)
     return df
 
+def convert_to_feature_csv(df: pd.DataFrame, output_path: Path):
+    """
+    Convert the DataFrame to a CSV file with specific formatting.
+    Args:
+        df (pd.DataFrame): DataFrame to convert.
+        output_path (Path): Path to save the CSV file.
+    """
+    df.to_csv(output_path, sep=',', index=False, header=True)
 
 def process_pfa_file(input_file: Path, response_type: str, unzipped_files_dir: Path):
     """
@@ -71,6 +79,12 @@ def process_pfa_file(input_file: Path, response_type: str, unzipped_files_dir: P
         List[Dict]: Metadata from the PFA file.
         List[Dict]: MS2 scans from the PFA file.
     """
+
+    if not isinstance(input_file, Path):
+        input_file = Path(input_file)
+    if not isinstance(unzipped_files_dir, Path):
+        unzipped_files_dir = Path(unzipped_files_dir)
+
     if not unzipped_files_dir.exists():
         unzipped_files_dir.mkdir(parents=True, exist_ok=True)
     else:

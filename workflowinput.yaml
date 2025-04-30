@@ -75,6 +75,8 @@ parameterlist:
           display: AGILENT (Legacy)
         - value: AGILENT2
           display: AGILENT2
+        - value: AGILENT_EXPLORER2
+          display: AGILENT_EXPLORER2
 
     - displayname: Additional Edges
       paramtype: section

@@ -17,6 +17,7 @@ import progenesis_formatter
 import mztabm_formatter
 import agilent_formatter
 import agilent2_formatter
+from agilent_explorer2_formatter import agilent_explorer2_formatter
 
 
 def main():
@@ -26,6 +27,7 @@ def main():
     parser.add_argument('quantification_table_reformatted', help='quantification_table_reformatted')
     parser.add_argument('input_spectra_folder', help='input_spectra_folder')
     parser.add_argument('output_mgf', help='output_mgf')
+    parser.add_argument('output_metadata', help='Output name of the metadata file, only used for AGILENT_EXPLORER2')
     parser.add_argument('--QUANT_FILE_NORM', default="None", help='QUANT_FILE_NORM')
     
     args = parser.parse_args()
@@ -132,6 +134,22 @@ def main():
 
         feature_table_df = agilent2_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
         agilent2_formatter.convert_mgf(input_filenames, feature_table_df, args.output_mgf)
+    elif args.toolname == "AGILENT_EXPLORER2":
+        print("AGILENT_EXPLORER2")
+
+        if len(input_filenames) != 1:
+            print("Must input exactly 1 spectrum mgf file")
+            exit(1)
+
+        # Parse the file
+        feature_table_df, metadata, ms2 = agilent_explorer2_formatter.process_pfa_file(input_filenames[0], response_type="Algo", unzipped_files_dir="./PFA_unzipped_files")
+
+        # Write the outputs
+        agilent_explorer2_formatter.convert_to_feature_csv(feature_table_df, args.quantification_table_reformatted)
+        agilent_explorer2_formatter.write_to_mgf(args.output_mgf, ms2)
+        agilent_explorer2_formatter.write_metadata(args.output_metadata, metadata)
+    
+    
     elif args.toolname == "MZTABM":
         print("MZTABM")
 
