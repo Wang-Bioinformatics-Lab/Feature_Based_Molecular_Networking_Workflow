@@ -319,3 +319,12 @@ Views:
             -   gnps2_mgf:TASKLOCATION/[task]/nf_output/clustering/spectra_reformatted.mgf
             -   datasource:GNPS2
             -   description:Downstream from [task] Feature Based Molecular Networking
+
+-   name: PostNetworking - MassQL Interactive Analysis
+    displayname: PostNetworking - MassQL Interactive Analysis
+    viewname: massqlpostmn
+    displaytype: linkout
+    parameters:
+        baseurl: "https://massqlpostmn.gnps2.org"
+        urlparam:
+            -   task_id:[task]
