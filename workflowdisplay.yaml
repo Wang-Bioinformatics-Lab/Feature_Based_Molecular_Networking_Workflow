@@ -277,6 +277,16 @@ Views:
     parameters:
         baseurl: https://fbmn-statsguide.gnps2.org/Data_Preparation
 
+-   name: Downstream Analysis - FBMN Simple Plotter
+    displayname: Downstream Analysis - FBMN Simple Plotter
+    viewname: downstreamplotter
+    displaytype: linkout
+    parameters:
+        baseurl: https://plotter.gnps2.org/
+        urlparam:
+            -   gnps_quant_table_usi:mzspec:GNPS2:TASK-[task]-nf_output/clustering/featuretable_reformated.csv
+            -   gnps_metadata_table_usi:mzspec:GNPS2:TASK-[task]-nf_output/metadata/merged_metadata.tsv
+
 -   name: Downstream Analysis - Run Transitive Alignments
     displayname: Downstream Analysis - Run Transitive Alignments
     viewname: downstreamtransitive
