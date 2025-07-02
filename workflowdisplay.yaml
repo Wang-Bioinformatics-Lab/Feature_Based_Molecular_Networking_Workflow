@@ -16,6 +16,8 @@ Views:
                 data: "parent mass"
             -   title: "Compound_Name"
                 data: "Compound_Name"
+            -   title: "RT"
+                data: "RTMean"
         columnDefs: '[ {"targets": 0,"data": null,"render": function ( data, type, row, meta ) {
         return `
             <a target="_blank" href="https://metabolomics-usi.gnps2.org/dashinterface/?usi1=mzspec:GNPS2:TASK-${task}-nf_output/clustering/spectra_reformatted.mgf:scan:${row["cluster index"]}">View Spectrum</a>
