@@ -341,3 +341,12 @@ Views:
         baseurl: "https://massqlpostmn.gnps2.org"
         urlparam:
             -   task_id:[task]
+
+-   name: PostNetworking - Multistep MassQL Interactive Analysis
+    displayname: PostNetworking - Multistep MassQL Interactive Analysis
+    viewname: massqlpostmnmultistep
+    displaytype: linkout
+    parameters:
+        baseurl: "https://multistep-massql.gnps2.org/"
+        urlparam:
+            -   task_id:[task]
