@@ -350,3 +350,12 @@ Views:
         baseurl: "https://multistep-massql.gnps2.org/"
         urlparam:
             -   task_id:[task]
+
+-   name: PostNetworking - Drug Readout Interactive Analysis
+    displayname: PostNetworking - Drug Readout Interactive Analysis
+    viewname: massqlpostmndrugreadout
+    displaytype: linkout
+    parameters:
+        baseurl: "https://drugreadouts.gnps2.org/"
+        urlparam:
+            -   task_id:[task]
