@@ -70,30 +70,30 @@ def calculate_groups_metadata(feature_table_df, metadata_df):
     # Doing the actual calculations
     cluster_summary_list = cluster_summary_df.to_dict(orient="records")
 
-    for cluster in tqdm(cluster_summary_list):
+    # (attribute) -> (cluster ID, attribute value) -> mean area
+    group_means = {}
+
+    for attribute in tqdm(set(ag["attribute"] for ag in all_attribute_groups), desc="Calculating group means"):
+        group_means[attribute] = (
+            tall_feature_table_df
+            .groupby(["row ID", attribute], observed=True)["area"]
+            .mean()
+        )
+
+    for cluster in tqdm(cluster_summary_list, desc="Updating cluster summaries"):
         # Getting the cluster index
         cluster_index = cluster["cluster index"]
 
-        # filter the dataframe
-        filtered_cluster_df = tall_feature_table_df[tall_feature_table_df["row ID"] == cluster_index]
-
-        # Attribute_group
         for attribute_group in all_attribute_groups:
             attribute = attribute_group["attribute"]
             group_name = attribute_group["group"]
 
-            # Doing the actual calculations
             try:
-                # filtering the data
-                group_data_df = filtered_cluster_df[filtered_cluster_df[attribute] == group_name]
-
-                # Calculating the average area
-                area_average = group_data_df["area"].mean()
-            except:
+                area_average = group_means[attribute].loc[(cluster_index, group_name)]
+            except KeyError:
                 area_average = 0
-            
-            group_column = "{}:GNPSGROUP:{}".format(attribute, group_name)
 
+            group_column = f"{attribute}:GNPSGROUP:{group_name}"
             cluster[group_column] = area_average
 
     return pd.DataFrame(cluster_summary_list)
