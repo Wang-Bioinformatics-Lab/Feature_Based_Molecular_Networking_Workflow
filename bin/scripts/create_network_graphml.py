@@ -8,6 +8,7 @@ import molecular_network_filtering_library
 import networkx as nx
 import argparse
 import glob
+import logging
 
 
 def convert_network(G):
@@ -114,19 +115,30 @@ def main():
 
     args = parser.parse_args()
 
+    logging.basicConfig(level=logging.INFO)
+
+    # Dump all args
+    logging.info("Arguments:")
+    for arg in vars(args):
+        logging.info(f"  {arg}: {getattr(args, arg)}")
     
     #############################################
     # Parsing the normal network
     #############################################
 
     # Doing other filtering
+    logging.info("Loading network from pairs file...")
     G = molecular_network_filtering_library.loading_network(args.input_pairs, hasHeaders=True)
-
+    
+    logging.info("Adding cluster info summary to graph...")
     molecular_network_filtering_library.add_clusterinfo_summary_to_graph(G, args.input_clusterinfo_summary)
+    logging.info("Adding library search results to graph...")
     molecular_network_filtering_library.add_library_search_results_to_graph(G, args.input_library_matches)
 
     # Adding supplemental edges if there are any available
     all_supplemental_files = glob.glob(os.path.join(args.input_supplemental_edges_folder, "*"))
+    logging.info(f"Found {len(all_supplemental_files)} supplemental edge files.")
+    logging.info("Adding supplemental edges to graph...")
     for supplemental_file_path in all_supplemental_files:
         try:
             G = molecular_network_filtering_library.add_additional_edges(G, supplemental_file_path)
@@ -136,8 +148,10 @@ def main():
     # Cleaning up network when the clusterinfo summary is not present 
 
     # Reformatting
+    logging.info("Converting network to GraphML format...")
     G = convert_network(G)
 
+    logging.info(f"Writing output GraphML to {args.output_graphml} ...")
     nx.write_graphml(G, args.output_graphml, infer_numeric_types=True)
 
 
@@ -145,15 +159,20 @@ def main():
     #############################################
     # Parsing the singleton network
     #############################################
+    logging.info("Loading network from pairs file for singleton inclusion...")
     G = molecular_network_filtering_library.loading_network(args.input_pairs, hasHeaders=True)
     
     # Adding the singletons into the network
+    logging.info("Adding singletons to the network...")
     molecular_network_filtering_library.add_singletons_to_network(G, args.input_clusterinfo_summary)
 
+    logging.info("Adding cluster info summary to graph for singleton network...")
     molecular_network_filtering_library.add_clusterinfo_summary_to_graph(G, args.input_clusterinfo_summary)
+    logging.info("Adding library search results to graph for singleton network...")
     molecular_network_filtering_library.add_library_search_results_to_graph(G, args.input_library_matches)
 
     # Adding supplemental edges if there are any available
+    logging.info("Adding supplemental edges to graph for singleton network...")
     all_supplemental_files = glob.glob(os.path.join(args.input_supplemental_edges_folder, "*"))
     for supplemental_file_path in all_supplemental_files:
         try:
@@ -164,8 +183,10 @@ def main():
     # Cleaning up network when the clusterinfo summary is not present 
 
     # Reformatting
+    logging.info("Converting singleton network to GraphML format...")
     G = convert_network(G)
 
+    logging.info(f"Writing output GraphML with singletons to {args.output_with_singleton_graphml} ...")
     nx.write_graphml(G, args.output_with_singleton_graphml, infer_numeric_types=True)
 
 
