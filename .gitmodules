@@ -4,3 +4,6 @@
 [submodule "GNPS_sharedcode"]
 	path = GNPS_sharedcode
 	url = https://github.com/mwang87/GNPS_sharedcode.git
+[submodule "bin/NextflowModules"]
+	path = bin/NextflowModules
+	url = https://github.com/Wang-Bioinformatics-Lab/NextflowModules.git

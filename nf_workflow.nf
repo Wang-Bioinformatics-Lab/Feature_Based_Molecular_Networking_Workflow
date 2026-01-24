@@ -63,7 +63,25 @@ params.OMETAPARAM_YAML = "job_parameters.yaml"
 
 params.publishdir = "$baseDir"
 TOOL_FOLDER = "$baseDir/bin"
+MODULES_FOLDER = "$TOOL_FOLDER/NextflowModules"
 
+
+// COMPATIBILITY NOTE: The following might be necessary if this workflow is being deployed in a slightly different environemnt
+// checking if outdir is defined,
+// if so, then set publishdir to outdir
+if (params.outdir) {
+    _publishdir = params.outdir
+}
+else{
+    _publishdir = params.publishdir
+}
+
+// Augmenting with nf_output
+_publishdir = "${_publishdir}/nf_output"
+
+// A lot of useful modules are already implemented and added to the nextflow modules, you can import them to use
+// the publishdir is a key word that we're using around all our modules to control where the output files will be saved
+include {summaryLibrary} from "$MODULES_FOLDER/nf_library_search_modules.nf" addParams(publishdir: _publishdir)
 
 process filesummary {
     publishDir "$params.publishdir/nf_output/filesummary", mode: 'copy'
@@ -374,26 +392,6 @@ process createNetworkGraphML {
     """
 }
 
-process summaryLibrary {
-    publishDir "$params.publishdir/nf_output", mode: 'copy'
-
-    cache 'lenient'
-
-    conda "$TOOL_FOLDER/conda_env.yml"
-
-    input:
-    path library_file
-
-    output:
-    path '*.tsv' optional true
-
-    """
-    python $TOOL_FOLDER/scripts/library_summary.py \
-    $library_file \
-    ${library_file}.tsv
-    """
-}
-
 process createTallRawData {
     publishDir "$params.publishdir/nf_output/clustering", mode: 'copy'
 
@@ -420,7 +418,12 @@ process createTallRawData {
 workflow {
     // File Summary
     input_spectra_ch = Channel.fromPath(params.input_raw_spectra)
-    filesummary(input_spectra_ch, 1)
+    filesummary(input_spectra_ch, 1) // This is old, we won't use it
+
+    //ontology_file = collect_obonet()
+    //python_parser(inputs, ontology_file)
+    //outputs = python_parser.out.results
+    //summarized_files = per_file_summarization(outputs.filter { file -> file.text.readLines().size() > 1 })
 
     // Converting the quantification table
     input_features = Channel.fromPath(params.inputfeatures)
