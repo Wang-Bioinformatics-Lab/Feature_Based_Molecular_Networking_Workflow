@@ -20,3 +20,6 @@ run_agilent2:
 		--featurefindingtool=AGILENT2  \
 		--input_raw_spectra ./data/raw_data \
 		--input_supplemental_edges ./data/raw_data
+
+init_modules:
+	git submodule update --init --recursive
