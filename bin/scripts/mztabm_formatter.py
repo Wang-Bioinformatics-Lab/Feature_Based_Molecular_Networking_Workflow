@@ -31,9 +31,18 @@ def convert_to_feature_csv(input_filename, output_filename):
     smf_data = pd.read_csv(StringIO("".join(SMF_lines)), sep="\t")
     sme_data = pd.read_csv(StringIO("".join(SME_lines)), sep="\t")
 
+    sml_data.columns = sml_data.columns.str.strip()
+    smf_data.columns = smf_data.columns.str.strip()
+    sme_data.columns = sme_data.columns.str.strip()
+
+    smf_data = smf_data.loc[:, ~smf_data.columns.duplicated(keep='first')]
+    sme_data = sme_data.loc[:, ~sme_data.columns.duplicated(keep='first')]
+
     #Parsing out metadata
     mtd_data = pd.read_csv(StringIO("".join(MTD_lines)), sep="\t", header=None)[[0, 1, 2]]
     mtd_data.columns = ['MTD', 'type', 'value']
+    mtd_data['type'] = mtd_data['type'].str.strip()
+    mtd_data['value'] = mtd_data['value'].str.strip()
 
     ms_run_to_filename = {}
     for record in mtd_data.to_dict(orient="records"):

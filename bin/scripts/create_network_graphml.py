@@ -16,6 +16,10 @@ def convert_network(G):
     new_G = nx.Graph()
 
     all_nodes = list(G.nodes())
+    
+    # Handle empty network
+    if len(all_nodes) == 0:
+        return new_G
 
     group_columns = G.nodes[all_nodes[0]].keys()
     group_columns = [key for key in group_columns if "GNPSGROUP" in key]

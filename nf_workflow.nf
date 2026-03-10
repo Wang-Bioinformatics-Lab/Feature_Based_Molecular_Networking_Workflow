@@ -417,6 +417,58 @@ process createTallRawData {
     """
 }
 
+process exportMetaboAnalyst {
+    publishDir "$params.publishdir/nf_output/metabo_analyst", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    when:
+    params.featurefindingtool != "MZTABM" && input_metadata.name != "NO_FILE"
+
+    input:
+    path input_features
+    path input_metadata
+
+    output:
+    path 'metaboanalyst_onefactor.csv'
+    path 'metaboanalyst_quant.csv'
+    path 'metaboanalyst_metadata.csv'
+    path 'metaboanalyst_readme.txt'
+
+    """
+    python $TOOL_FOLDER/scripts/export_metaboanalyst.py \
+    --feature-table $input_features \
+    --metadata $input_metadata \
+    --metaboanalyst-onefactor metaboanalyst_onefactor.csv \
+    --metaboanalyst-quant metaboanalyst_quant.csv \
+    --metaboanalyst-metadata metaboanalyst_metadata.csv \
+    --readme metaboanalyst_readme.txt
+    """
+}
+
+process mergeMztabLibrarySearchResults {
+    publishDir "$params.publishdir/nf_output/merge_mztab_library_search", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    when:
+    params.featurefindingtool == "MZTABM" && input_library_matches.name != "NO_FILE"
+
+    input:
+    file input_library_matches
+    file inputfeatures
+
+    output:
+    path 'mztab_merged_results.mztab'
+
+    """
+    python $TOOL_FOLDER/scripts/mztab_library_merge.py \
+    -l $input_library_matches \
+    -m $inputfeatures \
+    -o mztab_merged_results.mztab
+    """
+}
+
 workflow {
     // File Summary
     input_spectra_ch = Channel.fromPath(params.input_raw_spectra)
@@ -493,5 +545,13 @@ workflow {
 
     // Creating the tall quant table
     createTallRawData(_features_reformatted_ch, input_spectra_ch)
+
+    // Export for MetaboAnalyst
+    // Only runs if we have a metadata file and we're not using feature finding == MZTAB
+    exportMetaboAnalyst(_features_reformatted_ch, input_metadata_ch)
+
+    // Merge library results back to the original MZTAB file
+    // runs only when the feature finding tool equals MZTABM
+    mergeMztabLibrarySearchResults(gnps_library_results_ch, input_features)
 
 }

@@ -153,9 +153,14 @@ def main():
     elif args.toolname == "MZTABM":
         print("MZTABM")
 
+        if len(input_filenames) != 1:
+            print("Must input exactly 1 spectrum mgf file")
+            exit(1)
+
+        input_mgf = input_filenames[0]
+
         compound_filename_mapping = mztabm_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
-        # TODO: Fix This
-        mztabm_formatter.create_mgf(input_filenames, args.output_mgf, compound_filename_mapping, name_mangle_mapping=name_mangle_mapping)
+        shutil.copyfile(input_mgf, args.output_mgf)
 
     # Finally, we can renormlize the output
     try:
