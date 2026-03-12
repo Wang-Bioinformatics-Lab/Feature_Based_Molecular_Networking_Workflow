@@ -439,6 +439,7 @@ process createMztabOutput {
     --feature_table $input_featuretable \
     --ms_run_file specs_ms.mgf \
     --featurefindingtool $params.featurefindingtool \
+    --workflowinput_yaml $baseDir/workflowinput.yaml \
     --output fbmn_results.mztab
     """
 }
