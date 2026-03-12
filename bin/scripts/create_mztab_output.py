@@ -38,6 +38,18 @@ import pandas as pd
 # helpers
 # ---------------------------------------------------------------------------
 
+def _read_workflow_version(yaml_path: str) -> str:
+    """Extract workflowversion from workflowinput.yaml without requiring PyYAML."""
+    if not yaml_path or not os.path.exists(yaml_path):
+        return "Unknown"
+    with open(yaml_path, encoding="utf-8") as fh:
+        for line in fh:
+            m = re.match(r'^workflowversion\s*:\s*["\']?([^"\'#\n]+)["\']?', line)
+            if m:
+                return m.group(1).strip()
+    return "Unknown"
+
+
 def _null(v) -> str:
     """Return 'null' when a value is missing / NaN / empty."""
     if v is None:
@@ -256,7 +268,7 @@ def build_study_variables(samples: list, metadata_df: pd.DataFrame) -> list:
 # ---------------------------------------------------------------------------
 
 def build_mtd(samples: list, study_variables: list, ms_run_file: str,
-              featurefindingtool: str) -> list:
+              featurefindingtool: str, workflow_version: str = "Unknown") -> list:
     lines = []
 
     def m(key, val):
@@ -300,7 +312,7 @@ def build_mtd(samples: list, study_variables: list, ms_run_file: str,
         m("study_variable[{}]-assay_refs".format(j), refs)
 
     # MS:1000531  software  (correct parent term for a software entry)
-    m("software[1]", "[MS, MS:1000531, GNPS2 FBMN, 1.0]")
+    m("software[1]", "[MS, MS:1000531, GNPS2 FBMN, {}]".format(workflow_version))
 
     # MS:1001834  LC-MS label-free quantitation analysis
     # Correct usage: describes the *quantification workflow/method*, not a unit.
@@ -664,8 +676,9 @@ def write_mztab(args):
     assay_map = build_assay_map(samples)
     study_variables = build_study_variables(samples, metadata_df)
 
+    workflow_version = _read_workflow_version(args.workflowinput_yaml)
     mtd_lines = build_mtd(samples, study_variables,
-                          args.ms_run_file, args.featurefindingtool)
+                          args.ms_run_file, args.featurefindingtool, workflow_version)
     sml_lines = build_sml(cluster_df, lib_df, feature_df,
                           samples, assay_map, study_variables)
     smf_lines = build_smf(cluster_df, lib_df, feature_df, samples, assay_map)
@@ -710,6 +723,8 @@ def main():
                    help="Name / path of the spectra file used during networking")
     p.add_argument("--featurefindingtool", default="UNKNOWN",
                    help="Feature finding tool name")
+    p.add_argument("--workflowinput_yaml", default="",
+                   help="Path to workflowinput.yaml to read workflowversion")
     p.add_argument("--output", required=True,
                    help="Output mzTab file path")
     args = p.parse_args()
