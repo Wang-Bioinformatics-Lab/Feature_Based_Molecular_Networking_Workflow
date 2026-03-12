@@ -417,55 +417,29 @@ process createTallRawData {
     """
 }
 
-process exportMetaboAnalyst {
-    publishDir "$params.publishdir/nf_output/metabo_analyst", mode: 'copy'
+process createMztabOutput {
+    publishDir "$params.publishdir/nf_output/mztab", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
-    when:
-    params.featurefindingtool != "MZTABM" && input_metadata.name != "NO_FILE"
-
     input:
-    path input_features
+    path input_clustersummary
+    path input_library_matches
     path input_metadata
+    path input_featuretable
 
     output:
-    path 'metaboanalyst_onefactor.csv'
-    path 'metaboanalyst_quant.csv'
-    path 'metaboanalyst_metadata.csv'
-    path 'metaboanalyst_readme.txt'
+    path 'fbmn_results.mztab'
 
     """
-    python $TOOL_FOLDER/scripts/export_metaboanalyst.py \
-    --feature-table $input_features \
+    python $TOOL_FOLDER/scripts/create_mztab_output.py \
+    --cluster_summary $input_clustersummary \
+    --library_results $input_library_matches \
     --metadata $input_metadata \
-    --metaboanalyst-onefactor metaboanalyst_onefactor.csv \
-    --metaboanalyst-quant metaboanalyst_quant.csv \
-    --metaboanalyst-metadata metaboanalyst_metadata.csv \
-    --readme metaboanalyst_readme.txt
-    """
-}
-
-process mergeMztabLibrarySearchResults {
-    publishDir "$params.publishdir/nf_output/merge_mztab_library_search", mode: 'copy'
-
-    conda "$TOOL_FOLDER/conda_env.yml"
-
-    when:
-    params.featurefindingtool == "MZTABM" && input_library_matches.name != "NO_FILE"
-
-    input:
-    file input_library_matches
-    file inputfeatures
-
-    output:
-    path 'mztab_merged_results.mztab'
-
-    """
-    python $TOOL_FOLDER/scripts/mztab_library_merge.py \
-    -l $input_library_matches \
-    -m $inputfeatures \
-    -o mztab_merged_results.mztab
+    --feature_table $input_featuretable \
+    --ms_run_file specs_ms.mgf \
+    --featurefindingtool $params.featurefindingtool \
+    --output fbmn_results.mztab
     """
 }
 
@@ -546,12 +520,7 @@ workflow {
     // Creating the tall quant table
     createTallRawData(_features_reformatted_ch, input_spectra_ch)
 
-    // Export for MetaboAnalyst
-    // Only runs if we have a metadata file and we're not using feature finding == MZTAB
-    exportMetaboAnalyst(_features_reformatted_ch, input_metadata_ch)
-
-    // Merge library results back to the original MZTAB file
-    // runs only when the feature finding tool equals MZTABM
-    mergeMztabLibrarySearchResults(gnps_library_results_ch, input_features)
+    // Create mzTab-M 2.0 output for ALL featurefindingtool inputs
+    createMztabOutput(clustersummary_with_network_ch, gnps_library_results_ch, merged_metadata_ch, _features_reformatted_ch)
 
 }
