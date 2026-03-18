@@ -24,7 +24,10 @@ def main():
     df_cluster_summary = pd.read_csv(args.input_clustersummary, sep='\t')
 
     # Loading Filtered Pairs
-    df_filtered_pairs = pd.read_csv(args.input_filtered_pairs, sep='\t')
+    try:
+        df_filtered_pairs = pd.read_csv(args.input_filtered_pairs, sep='\t')
+    except:
+        df_filtered_pairs = pd.DataFrame(columns=['CLUSTERID1', 'CLUSTERID2', 'ComponentIndex'])
 
     # Loading Library Matches
     try:

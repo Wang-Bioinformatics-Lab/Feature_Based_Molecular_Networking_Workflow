@@ -417,6 +417,33 @@ process createTallRawData {
     """
 }
 
+process createMztabOutput {
+    publishDir "$params.publishdir/nf_output/mztab", mode: 'copy'
+
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    path input_clustersummary
+    path input_library_matches
+    path input_metadata
+    path input_featuretable
+
+    output:
+    path 'fbmn_results.mztab'
+
+    """
+    python $TOOL_FOLDER/scripts/create_mztab_output.py \
+    --cluster_summary $input_clustersummary \
+    --library_results $input_library_matches \
+    --metadata $input_metadata \
+    --feature_table $input_featuretable \
+    --ms_run_file specs_ms.mgf \
+    --featurefindingtool $params.featurefindingtool \
+    --workflowinput_yaml $baseDir/workflowinput.yaml \
+    --output fbmn_results.mztab
+    """
+}
+
 workflow {
     // File Summary
     input_spectra_ch = Channel.fromPath(params.input_raw_spectra)
@@ -493,5 +520,8 @@ workflow {
 
     // Creating the tall quant table
     createTallRawData(_features_reformatted_ch, input_spectra_ch)
+
+    // Create mzTab-M 2.0 output for ALL featurefindingtool inputs
+    createMztabOutput(clustersummary_with_network_ch, gnps_library_results_ch, merged_metadata_ch, _features_reformatted_ch)
 
 }
