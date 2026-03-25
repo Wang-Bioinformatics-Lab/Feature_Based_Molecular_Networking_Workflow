@@ -64,7 +64,7 @@ Views:
         var name = row["Compound_Name"] || "";
         var match = name.match(/LMFA\d{8}/);
         if (match) {
-            return `<a target="_blank" href="https://fileserver.wanglab.science/ming/librarylinkout/library_linkout.html?accession=${match[0]}">${name}</a>`;
+            return `<a target="_blank" href="https://wang-bioinformatics-lab.github.io/GNPS2_Documentation/html/library_linkout.html?accession=${match[0]}">${name}</a>`;
         }
         return name;
         }},
