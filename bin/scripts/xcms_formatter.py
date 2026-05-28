@@ -16,6 +16,12 @@ def convert_to_feature_csv(input_filename, output_filename):
 
     input_format_df = pd.read_csv(input_filename,index_col=None,sep='\t')
 
+    # xcms 4 (jorainer/xcms-gnps-tools customFunctions.R) writes the feature
+    # identifier column as `feature_id` instead of `Row.names` as the
+    # xcms 3 era export (DorresteinLaboratory/XCMS3_FeatureBasedMN) did.
+    if 'feature_id' in input_format_df.columns and 'Row.names' not in input_format_df.columns:
+        input_format_df = input_format_df.rename(columns={'feature_id': 'Row.names'})
+
     if 'annotation network number' not in input_format_df.columns:
         #Prepare left table with ID mz rt
         input_format_df = input_format_df.rename(columns={ "Row.names":"row ID", "mzmed":"row m/z","rtmed":"row retention time"})

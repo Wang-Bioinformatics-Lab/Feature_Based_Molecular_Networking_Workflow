@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "2026.03.19"
+workflowversion: "2026.05.28"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -62,7 +62,7 @@ parameterlist:
         - value: PROGENESIS
           display: PROGENESIS
         - value: XCMS3
-          display: XCMS3
+          display: XCMS 3 or 4
         - value: METABOSCAPE
           display: METABOSCAPE
         - value: MSDIAL
