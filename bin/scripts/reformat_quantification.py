@@ -17,6 +17,7 @@ import progenesis_formatter
 import mztabm_formatter
 import agilent_formatter
 import agilent2_formatter
+import masscube_formatter
 from agilent_explorer2_formatter import agilent_explorer2_formatter
 
 
@@ -161,6 +162,17 @@ def main():
 
         compound_filename_mapping = mztabm_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
         shutil.copyfile(input_mgf, args.output_mgf)
+
+    elif args.toolname == "MASSCUBE":
+        print("MASSCUBE")
+
+        if len(input_filenames) != 1:
+            print("Must input exactly 1 spectrum msp file")
+            exit(1)
+
+        input_msp = input_filenames[0]
+        masscube_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
+        masscube_formatter.convert_mgf(input_msp, args.output_mgf)
 
     # Finally, we can renormlize the output
     try:

@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
-workflowlongdescription: This is a feature_based_molecular_networking_workflow workflow for GNPS2
-workflowversion: "2026.05.28"
+workflowlongdescription: This is a Feature Based Molecular Networking (FBMN) workflow for GNPS2. Please find the documentation <a href="https://wang-bioinformatics-lab.github.io/GNPS2_Documentation/fbmn/" target="_blank">here</a>.
+workflowversion: "2026.06.01"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -79,6 +79,8 @@ parameterlist:
           display: AGILENT_EXPLORER2
         - value: MZTABM
           display: MAZTABM
+        - value: MASSCUBE
+          display: MASSCUBE
 
     - displayname: Additional Edges
       paramtype: section
