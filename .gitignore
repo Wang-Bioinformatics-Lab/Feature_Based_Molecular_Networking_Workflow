@@ -2,3 +2,4 @@
 *.env
 *credentials
 *__pycache__*
+conda_env/
