@@ -36,7 +36,9 @@ def main():
     input_filenames = glob.glob(os.path.join(args.input_spectra_folder, "*"))
 
     # might be MZMINE MZMINE2 or MZMINE3 in the future
-    if "MZMINE" in args.toolname:
+    # ASARI exports a quant table and MGF already in the MZmine-style format,
+    # so it reuses the MZMINE code path.
+    if "MZMINE" in args.toolname or args.toolname == "ASARI":
         print(args.toolname)
 
         if len(input_filenames) != 1:

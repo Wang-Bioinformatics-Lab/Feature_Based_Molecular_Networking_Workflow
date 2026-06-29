@@ -81,6 +81,8 @@ parameterlist:
           display: MAZTABM
         - value: MASSCUBE
           display: MASSCUBE
+        - value: ASARI
+          display: ASARI
 
     - displayname: Additional Edges
       paramtype: section
