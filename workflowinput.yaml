@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a Feature Based Molecular Networking (FBMN) workflow for GNPS2. Please find the documentation <a href="https://wang-bioinformatics-lab.github.io/GNPS2_Documentation/fbmn/" target="_blank">here</a>.
-workflowversion: "2026.06.01"
+workflowversion: "2026.06.29"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
