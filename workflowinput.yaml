@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a Feature Based Molecular Networking (FBMN) workflow for GNPS2. Please find the documentation <a href="https://wang-bioinformatics-lab.github.io/GNPS2_Documentation/fbmn/" target="_blank">here</a>.
-workflowversion: "2026.06.29"
+workflowversion: "2026.07.08"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -231,8 +231,18 @@ parameterlist:
       nf_paramname: library_topk
       formplaceholder: Enter the topk
       formvalue: "1"
-    
-    
+
+    - displayname: Force Offline Annotations (speeds up workflow)
+      paramtype: select
+      nf_paramname: forceoffline
+      formvalue: "Yes"
+      options:
+        - value: "Yes"
+          display: "Yes"
+        - value: "No"
+          display: "No"
+
+
     - displayname: Normalization Parameters
       paramtype: section
 
