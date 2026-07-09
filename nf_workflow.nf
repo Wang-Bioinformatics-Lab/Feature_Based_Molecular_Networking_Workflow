@@ -380,8 +380,6 @@ process createNetworkGraphML {
 }
 
 process summaryLibrary {
-    publishDir "$params.publishdir/nf_output", mode: 'copy'
-
     cache 'lenient'
 
     conda "$TOOL_FOLDER/conda_env.yml"
