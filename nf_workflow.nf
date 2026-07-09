@@ -51,6 +51,9 @@ params.library_min_matched_peaks = 6
 params.library_analog_search = "0"
 params.library_analog_max_shift = 1999
 
+// Force offline library annotations (speeds up workflow by avoiding API calls)
+params.forceoffline = "Yes" // Yes or No
+
 //TODO: Implement This
 params.library_filter_precursor = 1
 params.library_filter_window = 1
@@ -310,6 +313,7 @@ process librarygetGNPSAnnotations {
     input:
     path "merged_results.tsv"
     path "library_summary.tsv"
+    val forceoffline
 
     output:
     path 'merged_results_with_gnps.tsv'
@@ -318,7 +322,8 @@ process librarygetGNPSAnnotations {
     python $TOOL_FOLDER/scripts/getGNPS_library_annotations.py \
     merged_results.tsv \
     merged_results_with_gnps.tsv \
-    --librarysummary library_summary.tsv
+    --librarysummary library_summary.tsv \
+    --forceoffline $forceoffline
     """
 }
 
@@ -470,7 +475,7 @@ workflow {
     library_summary_merged_ch = library_summary_ch.collectFile(name: "library_summary.tsv", keepHeader: true)
     library_summary_merged_ch = library_summary_merged_ch.ifEmpty(file("NO_FILE"))
 
-    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch, library_summary_merged_ch)
+    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch, library_summary_merged_ch, params.forceoffline)
     gnps_library_results_ch = gnps_library_results_ch.ifEmpty(file("NO_FILE"))
 
     // Networking
