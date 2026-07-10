@@ -38,7 +38,9 @@ def main():
     # might be MZMINE MZMINE2 or MZMINE3 in the future
     # ASARI exports a quant table and MGF already in the MZmine-style format,
     # so it reuses the MZMINE code path.
-    if "MZMINE" in args.toolname or args.toolname == "ASARI":
+    # EVERYTHING_BAGEL is the GNPS2 everything_bagel_workflow feature finding output,
+    # which emits an MZmine2-style quant table + MGF, so it also reuses the MZMINE code path.
+    if "MZMINE" in args.toolname or args.toolname in ("ASARI", "EVERYTHING_BAGEL"):
         print(args.toolname)
 
         if len(input_filenames) != 1:

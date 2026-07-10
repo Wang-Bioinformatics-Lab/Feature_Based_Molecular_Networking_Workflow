@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 // Define the input channels with default values
-params.featurefindingtool = "MZMINE"
+params.featurefindingtool = "EVERYTHING_BAGEL"
 
 params.inputfeatures = "data/mzmine2/gnps_featurefinding/features_quant.csv"
 params.inputspectra = "data/mzmine2/gnps_featurefinding/spectra"

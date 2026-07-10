@@ -53,8 +53,10 @@ parameterlist:
     - displayname: Feature Finding Tool
       paramtype: select
       nf_paramname: featurefindingtool
-      formvalue: MZMINE
+      formvalue: EVERYTHING_BAGEL
       options:
+        - value: EVERYTHING_BAGEL
+          display: Everything Bagel
         - value: MZMINE
           display: MZMINE
         - value: OPENMS
