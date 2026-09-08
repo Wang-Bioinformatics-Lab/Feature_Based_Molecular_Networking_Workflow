@@ -22,6 +22,22 @@ Library matches are annotated by `bin/scripts/getGNPS_library_annotations.py`. T
   `library_summary.tsv` that is built from the library `.mgf` files by
   `bin/scripts/library_summary.py`. This is much faster (no per-hit network calls).
 
+## NP Classifier Annotation
+
+The `npclassifier` parameter (default `Yes`) adds `npclassifier_pathway`,
+`npclassifier_superclass` and `npclassifier_class` columns to the library results,
+by classifying each hit's SMILES via https://npclassifier.gnps2.org. It runs in
+**both** online and offline mode — offline mode otherwise skips all structure
+enrichment, which is why these columns disappeared from default runs.
+
+Results are cached per unique SMILES, so the cost is one API call per distinct
+structure among the hits, not one per hit. Set `npclassifier = No` to drop the
+columns and make the annotation step fully network-free when `forceoffline = Yes`.
+
+These columns are carried onto the network nodes as `library_npclassifier_pathway`,
+`library_npclassifier_superclass` and `library_npclassifier_class` in
+`network.graphml`.
+
 **Important — non-unique SCANS in the current GNPS2 libraries.** Many of the
 libraries served from https://library.gnps2.org reuse the same `SCANS=` value
 across spectra (SCANS is a per-source-file counter, not a global unique id — e.g.

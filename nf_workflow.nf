@@ -54,6 +54,9 @@ params.library_analog_max_shift = 1999
 // Force offline library annotations (speeds up workflow by avoiding API calls)
 params.forceoffline = "Yes" // Yes or No
 
+// NP Classifier annotation of library hits (pathway/superclass/class), runs in both online and offline modes
+params.npclassifier = "Yes" // Yes or No
+
 //TODO: Implement This
 params.library_filter_precursor = 1
 params.library_filter_window = 1
@@ -314,6 +317,7 @@ process librarygetGNPSAnnotations {
     path "merged_results.tsv"
     path "library_summary.tsv"
     val forceoffline
+    val npclassifier
 
     output:
     path 'merged_results_with_gnps.tsv'
@@ -323,7 +327,8 @@ process librarygetGNPSAnnotations {
     merged_results.tsv \
     merged_results_with_gnps.tsv \
     --librarysummary library_summary.tsv \
-    --forceoffline $forceoffline
+    --forceoffline $forceoffline \
+    --npclassifier $npclassifier
     """
 }
 
@@ -473,7 +478,7 @@ workflow {
     library_summary_merged_ch = library_summary_ch.collectFile(name: "library_summary.tsv", keepHeader: true)
     library_summary_merged_ch = library_summary_merged_ch.ifEmpty(file("NO_FILE"))
 
-    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch, library_summary_merged_ch, params.forceoffline)
+    gnps_library_results_ch = librarygetGNPSAnnotations(merged_results_ch, library_summary_merged_ch, params.forceoffline, params.npclassifier)
     gnps_library_results_ch = gnps_library_results_ch.ifEmpty(file("NO_FILE"))
 
     // Networking

@@ -244,6 +244,16 @@ parameterlist:
         - value: "No"
           display: "No"
 
+    - displayname: NP Classifier Annotations (pathway/superclass/class)
+      paramtype: select
+      nf_paramname: npclassifier
+      formvalue: "Yes"
+      options:
+        - value: "Yes"
+          display: "Yes"
+        - value: "No"
+          display: "No"
+
 
     - displayname: Normalization Parameters
       paramtype: section

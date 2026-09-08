@@ -11,6 +11,11 @@ import glob
 import logging
 
 
+def _update_node_attribute(new_G, G, node, attribute, new_attribute):
+    if attribute in G.nodes[node]:
+        new_G.nodes[node][new_attribute] = G.nodes[node][attribute]
+
+
 def convert_network(G):
     # This helps to reformat from the standard GNPS library to be able to display in GNPS2
     new_G = nx.Graph()
@@ -74,6 +79,11 @@ def convert_network(G):
             new_G.nodes[node]["library_compound_name"] = G.nodes[node]["Compound_Name"]
             new_G.nodes[node]["library_SMILES"] = G.nodes[node]["Smiles"]
             new_G.nodes[node]["library_InChI"] = G.nodes[node]["INCHI"]
+
+            # Getting NP Classifier, only present when npclassifier annotation was enabled
+            _update_node_attribute(new_G, G, node, "npclassifier_pathway", "library_npclassifier_pathway")
+            _update_node_attribute(new_G, G, node, "npclassifier_superclass", "library_npclassifier_superclass")
+            _update_node_attribute(new_G, G, node, "npclassifier_class", "library_npclassifier_class")
 
     # Fixing Edges
     for node1, node2, data in G.edges.data():
