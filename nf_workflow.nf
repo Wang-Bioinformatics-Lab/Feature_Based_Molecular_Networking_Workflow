@@ -224,7 +224,11 @@ process createMetadataFile {
     conda "$TOOL_FOLDER/conda_env.yml"
 
     input:
-    file input_metadata
+    // Staged into a subfolder so an input literally named merged_metadata.tsv cannot
+    // collide with (and be overwritten through its symlink by) the output below.
+    // The subfolder keeps the original basename, which merge_metadata.py needs to
+    // dispatch on the .tsv/.csv/.xlsx extension.
+    path input_metadata, stageAs: 'input_metadata/*'
 
     output:
     file "merged_metadata.tsv"
