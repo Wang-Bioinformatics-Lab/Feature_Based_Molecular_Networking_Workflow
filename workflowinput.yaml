@@ -1,7 +1,7 @@
 workflowname: feature_based_molecular_networking_workflow
 workflowdescription: feature_based_molecular_networking_workflow
 workflowlongdescription: This is a Feature Based Molecular Networking (FBMN) workflow for GNPS2. Please find the documentation <a href="https://wang-bioinformatics-lab.github.io/GNPS2_Documentation/fbmn/" target="_blank">here</a>.
-workflowversion: "2026.08.18"
+workflowversion: "2026.10.14"
 workflowfile: nf_workflow.nf
 workflowautohide: false
 adminonly: false
@@ -198,6 +198,16 @@ parameterlist:
 
     - displayname: Library Search Parameters
       paramtype: section
+
+    - displayname: Search Tool
+      paramtype: select
+      nf_paramname: searchtool
+      formvalue: gnps
+      options:
+        - value: gnps
+          display: gnps
+        - value: fast_rust
+          display: Fast - Rust
 
     - displayname: Library Minimum Cosine
       paramtype: text

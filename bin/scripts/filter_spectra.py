@@ -42,7 +42,7 @@ def main():
     spectrum_collection.save_to_mgf(open(args.output_mgf_filename, "w"), renumber_scans=False)
 
     # Applying the Filtering
-    if args.FILTER_PRECURSOR_WINDOW == "1":
+    if args.WINDOW_FILTER == "1":
         for spectrum in spectrum_collection.spectrum_list:
             if spectrum is not None:
                 spectrum.window_filter_peaks(50, 6)

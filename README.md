@@ -12,6 +12,13 @@ https://www.nextflow.io/docs/latest/index.html
 
 ## Library Annotation (offline mode)
 
+The `Search Tool` option defaults to `gnps`, the established GNPS library-search
+implementation. `Fast - Rust` selects the Rust implementation used by Everything
+Bagel. For `Fast - Rust`, the workflow passes `precursor_filter` and
+`window_filter` to the search and applies each enabled filter to both query and
+library spectra. The molecular-networking branch uses the same two parameters
+through `filter_spectra.py`.
+
 Library matches are annotated by `bin/scripts/getGNPS_library_annotations.py`. The
 `forceoffline` parameter (default `Yes`) controls how the compound metadata
 (Compound_Name, Smiles, Adduct, …) is resolved for each hit:
@@ -59,9 +66,9 @@ here as a **real file** (`bin/scripts/library_summary.py`) rather than a symlink
 It is kept byte-for-byte identical to the canonical version at
 `NextflowModules/bin/library_search/library_summary.py`.
 
-TODO: migrate this workflow onto the `NextflowModules` submodule (as
-`LibrarySearch_Workflow` already has) and repoint the remaining `bin/scripts/`
-symlinks to it, so shared code has a single source of truth.
+Library search has been migrated to the Rust implementation used by the newer
+workflows. The remaining shared scripts still need to be migrated onto the
+`NextflowModules` submodule so they have a single source of truth.
 
 ## Installation
 

@@ -43,6 +43,7 @@ params.topology_topk = 10
 params.topology_maxcomponent = 100
 
 // Library Search Parameters
+params.searchtool = "gnps" // gnps, fast_rust
 params.library_topk = 1
 
 params.library_min_cosine = 0.7
@@ -56,10 +57,6 @@ params.forceoffline = "Yes" // Yes or No
 
 // NP Classifier annotation of library hits (pathway/superclass/class), runs in both online and offline modes
 params.npclassifier = "Yes" // Yes or No
-
-//TODO: Implement This
-params.library_filter_precursor = 1
-params.library_filter_window = 1
 
 // Define the paths to the required YAML files
 params.OMETALINKING_YAML = "flow_filelinking.yaml"
@@ -263,7 +260,38 @@ process calculateGroupings {
 }
 
 // Library Search
-process librarySearchData {
+process librarySearchDataFastRust {
+    conda "$TOOL_FOLDER/conda_env.yml"
+
+    input:
+    each file(input_library)
+    each file(input_spectrum)
+    val filter_precursor
+    val filter_window
+
+    output:
+    file 'search_results/*' optional true
+
+    """
+    mkdir search_results
+    python $TOOL_FOLDER/scripts/rust_library_search_wrapper.py \
+        $input_spectrum \
+        $input_library \
+        search_results \
+        $TOOL_FOLDER/binaries/library_search \
+        --pm_tolerance $params.pm_tolerance \
+        --fragment_tolerance $params.fragment_tolerance \
+        --topk $params.library_topk \
+        --library_min_cosine $params.library_min_cosine \
+        --library_min_matched_peaks $params.library_min_matched_peaks \
+        --analog_search $params.library_analog_search \
+        --library_analog_max_shift $params.library_analog_max_shift \
+        --filter_precursor $filter_precursor \
+        --filter_window $filter_window
+    """
+}
+
+process librarySearchDataGNPS {
     conda "$TOOL_FOLDER/conda_env.yml"
 
     input:
@@ -276,16 +304,18 @@ process librarySearchData {
     """
     mkdir search_results
     python $TOOL_FOLDER/scripts/library_search_wrapper.py \
-    $input_spectrum $input_library search_results \
-    $TOOL_FOLDER/binaries/convert \
-    $TOOL_FOLDER/binaries/main_execmodule.allcandidates \
-    --pm_tolerance $params.pm_tolerance \
-    --fragment_tolerance $params.fragment_tolerance \
-    --topk $params.library_topk \
-    --library_min_cosine $params.library_min_cosine \
-    --library_min_matched_peaks $params.library_min_matched_peaks \
-    --analog_search $params.library_analog_search \
-    --library_analog_max_shift $params.library_analog_max_shift
+        $input_spectrum \
+        $input_library \
+        search_results \
+        $TOOL_FOLDER/binaries/convert \
+        $TOOL_FOLDER/binaries/main_execmodule.allcandidates \
+        --pm_tolerance $params.pm_tolerance \
+        --fragment_tolerance $params.fragment_tolerance \
+        --topk $params.library_topk \
+        --library_min_cosine $params.library_min_cosine \
+        --library_min_matched_peaks $params.library_min_matched_peaks \
+        --analog_search $params.library_analog_search \
+        --library_analog_max_shift $params.library_analog_max_shift
     """
 }
 
@@ -471,7 +501,24 @@ workflow {
 
     // Library Search
     libraries_ch = Channel.fromPath(params.input_libraries + "/*.mgf" )
-    search_results_ch = librarySearchData(libraries_ch, _spectra_filtered_ch)
+    if (params.searchtool == "fast_rust") {
+        // Rust applies the selected filters symmetrically to query and library
+        // spectra, so it receives the unfiltered reformatted MGF.
+        search_results_ch = librarySearchDataFastRust(
+            libraries_ch,
+            _spectra_reformatted_ch2,
+            params.precursor_filter,
+            params.window_filter
+        )
+    }
+    else if (params.searchtool == "gnps") {
+        // Preserve the established GNPS path exactly: the query receives the
+        // workflow-filtered MGF and the legacy search filters libraries.
+        search_results_ch = librarySearchDataGNPS(libraries_ch, _spectra_filtered_ch)
+    }
+    else {
+        error "Unsupported searchtool: ${params.searchtool}"
+    }
     merged_results_ch = librarymergeResults(search_results_ch.collect())
     merged_results_ch = merged_results_ch.ifEmpty(file("NO_FILE"))
 
