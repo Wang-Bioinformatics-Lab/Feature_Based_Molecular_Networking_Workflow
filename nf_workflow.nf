@@ -297,6 +297,8 @@ process librarySearchDataGNPS {
     input:
     each file(input_library)
     each file(input_spectrum)
+    val filter_precursor
+    val filter_window
 
     output:
     file 'search_results/*' optional true
@@ -315,7 +317,9 @@ process librarySearchDataGNPS {
         --library_min_cosine $params.library_min_cosine \
         --library_min_matched_peaks $params.library_min_matched_peaks \
         --analog_search $params.library_analog_search \
-        --library_analog_max_shift $params.library_analog_max_shift
+        --library_analog_max_shift $params.library_analog_max_shift \
+        --filter_precursor $filter_precursor \
+        --filter_window $filter_window
     """
 }
 
@@ -512,9 +516,14 @@ workflow {
         )
     }
     else if (params.searchtool == "gnps") {
-        // Preserve the established GNPS path exactly: the query receives the
-        // workflow-filtered MGF and the legacy search filters libraries.
-        search_results_ch = librarySearchDataGNPS(libraries_ch, _spectra_filtered_ch)
+        // Keep the established filtered-query input and apply the selected
+        // filters during search to both query and library spectra.
+        search_results_ch = librarySearchDataGNPS(
+            libraries_ch,
+            _spectra_filtered_ch,
+            params.precursor_filter,
+            params.window_filter
+        )
     }
     else {
         error "Unsupported searchtool: ${params.searchtool}"
