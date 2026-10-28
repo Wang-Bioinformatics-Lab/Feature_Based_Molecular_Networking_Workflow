@@ -19,6 +19,7 @@ import agilent_formatter
 import agilent2_formatter
 import masscube_formatter
 import asari_formatter
+import everything_bagel_formatter
 from agilent_explorer2_formatter import agilent_explorer2_formatter
 
 
@@ -37,9 +38,7 @@ def main():
     input_filenames = glob.glob(os.path.join(args.input_spectra_folder, "*"))
 
     # might be MZMINE MZMINE2 or MZMINE3 in the future
-    # EVERYTHING_BAGEL is the GNPS2 everything_bagel_workflow feature finding output,
-    # which emits an MZmine2-style quant table + MGF, so it also reuses the MZMINE code path.
-    if "MZMINE" in args.toolname or args.toolname in ("EVERYTHING_BAGEL",):
+    if "MZMINE" in args.toolname:
         print(args.toolname)
 
         if len(input_filenames) != 1:
@@ -49,6 +48,15 @@ def main():
         input_mgf = input_filenames[0]
         shutil.copyfile(input_mgf, args.output_mgf)
         mzmine_formatter.convert_to_feature_csv(args.quantification_table, args.quantification_table_reformatted)
+
+    elif args.toolname == "EVERYTHING_BAGEL":
+        if len(input_filenames) != 1:
+            print("Must input exactly 1 spectrum mgf file")
+            exit(1)
+        everything_bagel_formatter.convert_to_feature_csv(
+            args.quantification_table, args.quantification_table_reformatted
+        )
+        everything_bagel_formatter.convert_mgf(input_filenames[0], args.output_mgf)
 
     elif args.toolname == "OPENMS":
         print("OPENMS")

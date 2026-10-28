@@ -25,12 +25,19 @@ To keep the downloads out of commits without changing shared ignore rules:
 printf '\n/data/msdial/\n' >> .git/info/exclude
 ```
 
-The workflow enforces the runtime alignment check for **MSDIAL5 only**, after
-conversion and before spectra filtering and networking. Other exporters may
-include padding scans that are not represented in the feature table, so the
-same check is not yet a verified contract for those methods. The generic checker
-remains available for explicit diagnostics. It compares IDs and precursor m/z
+The workflow enforces the runtime alignment check for **MSDIAL5, MSDIAL, MZMINE,
+EVERYTHING_BAGEL, ASARI, MASSCUBE, OPENMS, and XCMS3**, after conversion and before
+spectra filtering and networking. These importer contracts have local fixtures.
+Other importer paths remain unchanged until validated with their own data.
+The EB formatter removes recognizable empty padding without renumbering IDs;
+real or malformed zero-precursor spectra are not silently discarded.
+The generic checker remains available for explicit diagnostics. It compares IDs and precursor m/z
 with a **1 Da** absolute tolerance. It does not inspect retention times.
 The checker allows feature rows without MS/MS. It does not infer ID mappings, repair IDs, or change input
 data. The failure message is written directly to `nf_output/workflow_summary.txt`
 before the process exits nonzero, so it survives a failed Nextflow process.
+
+Cross-tool tests and their source-task provenance are under `test/tools/alignment/`;
+EB-specific normalization tests are under `test/tools/everything_bagel/`. They use
+small checked-in local fixtures and never contact external services. Optional
+full-task tests use existing local files selected by `GNPS_FEATURE_FINDER_TEST_DATA`.
