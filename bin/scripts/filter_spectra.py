@@ -29,9 +29,12 @@ def main():
         included_scans.add(int(spectrum.scan))
 
     max_scan = max(included_scans)
+    # MS-DIAL5 exports can start at zero. Preserve that original ID rather than
+    # silently dropping its spectrum while padding gaps for the networking tool.
+    min_scan = min(1, min(included_scans))
 
     output_spectrum_list = []
-    for scan_count in range(1, max_scan+1):
+    for scan_count in range(min_scan, max_scan+1):
         if scan_count in spectrum_dict:
             output_spectrum_list.append(spectrum_dict[scan_count])
         else:

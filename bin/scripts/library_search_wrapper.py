@@ -9,6 +9,7 @@ import argparse
 import uuid
 import pandas as pd
 from collections import defaultdict
+from spectrum_id_mapping import index_mgf_ids
 
 def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, path_to_convert, path_to_main_exec,
     min_cosine=0.7,
@@ -55,6 +56,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
     
     fileName, fileExtension = os.path.splitext(os.path.basename(spectrum_file))
     output_filename = ""
+    query_id_map = None
 
     if spectrum_file.find("mzXML") != -1 or spectrum_file.find("mzxml") != -1 or spectrum_file.find("mzML") != -1:
         output_filename = os.path.join(temp_folder, fileName + ".pklbin")
@@ -63,8 +65,7 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
         os.system(cmd)
     else:
         output_filename = os.path.join(temp_folder, os.path.basename(spectrum_file))
-        cmd = "cp %s %s" % (spectrum_file, output_filename)
-        os.system(cmd)
+        query_id_map = index_mgf_ids(spectrum_file, output_filename)
 
     #Input
     faked_output_filename = os.path.join(temp_folder, os.path.basename(spectrum_file))
@@ -83,6 +84,8 @@ def search_files(spectrum_file, library_file, temp_folder, tempresults_folder, p
         os.remove(output_filename)
     except:
         print("Can't remove", output_filename)
+
+    return query_id_map
 
 
 def main():
@@ -124,7 +127,7 @@ def main():
     print(args)
 
     # performing the search
-    search_files(args.spectrum_file, args.library_file,
+    query_id_map = search_files(args.spectrum_file, args.library_file,
         temp_folder, tempresults_folder,
         args.convert_binary, args.librarysearch_binary,
         min_cosine=args.library_min_cosine,
@@ -142,8 +145,14 @@ def main():
     
     results_df = pd.read_csv(os.path.join(tempresults_folder, "tempresults"), sep="\t")
 
+    if query_id_map is not None:
+        # Restore the original IDs, including zero, before downstream joins.
+        results_df["#Scan#"] = results_df["#Scan#"].map(lambda index: query_id_map[int(index)])
+
     # Fixing Results, by basename
     results_df["SpectrumFile"] = results_df["SpectrumFile"].apply(lambda x: os.path.basename(x))
+    if query_id_map is not None and "FileScanUniqueID" in results_df:
+        results_df["FileScanUniqueID"] = results_df["SpectrumFile"] + results_df["#Scan#"].astype(str)
 
     results_df.to_csv(output_results_file, sep="\t", index=False)
 

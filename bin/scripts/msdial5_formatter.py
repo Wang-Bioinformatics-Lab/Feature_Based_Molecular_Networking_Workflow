@@ -1,118 +1,63 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on 3/24/2024
+"""Convert MS-DIAL5 GNPS exports without changing their shared alignment IDs."""
 
-@author: mingxun wang
-@purpose: to convert the MS-DIAL5 file into a compatible format
-"""
-import pandas as pd
 import sys
+import tempfile
+
+import pandas as pd
 from pyteomics import mgf
 
+
 def convert_to_feature_csv(input_filename, output_filename):
-    input_format = pd.read_csv(input_filename, sep='\t', skiprows=4)
+    input_format = pd.read_csv(input_filename, sep="\t", skiprows=4)
+    headers = list(input_format.columns)
+    # GNPS exports place sample abundances after the last spectrum annotation.
+    # Annotation counts vary between MS-DIAL5 versions and mobility exports.
+    if "MS/MS spectrum" not in headers:
+        raise ValueError("MS-DIAL5 GNPS feature table is missing the MS/MS spectrum column")
+    sample_names = headers[headers.index("MS/MS spectrum") + 1:]
 
-    #Check IMS data columns and drop them
-    if 'Average drift time' in input_format.columns:
-        input_format = input_format.drop(['Average drift time','Average CCS'], axis=1)
+    output_format = input_format[["Alignment ID", "Average Mz", "Average Rt(min)"] + sample_names].copy()
+    output_format.rename(columns={
+        "Alignment ID": "row ID",
+        "Average Mz": "row m/z",
+        "Average Rt(min)": "row retention time",
+        **{name: name + " Peak area" for name in sample_names},
+    }, inplace=True)
+    output_format.to_csv(output_filename, index=False)
 
-    #Continue with the processing
-    headers = list(input_format.keys())
-    sample_names = headers[22:]
 
-    input_records = input_format.to_dict(orient="records")
-    output_records = []
+def _filtered_spectra(reader):
+    for spectrum in reader:
+        # SCANS and feature-table Alignment ID already identify the same feature.
+        # Neither a +1 shift nor an independent sequential index is appropriate.
+        if "scans" not in spectrum["params"]:
+            raise ValueError("MS-DIAL5 GNPS spectrum is missing its SCANS alignment ID")
+        intensities = spectrum["intensity array"]
+        if len(intensities):
+            keep = intensities > max(intensities) * 0.01
+            spectrum["m/z array"] = spectrum["m/z array"][keep]
+            spectrum["intensity array"] = intensities[keep]
+        yield spectrum
 
-    for record in input_records:
-        scan = int(record["Alignment ID"]) + 1
-        mz = record["Average Mz"]
-        rt = record["Average Rt(min)"]
-
-        output_record = {}
-        output_record["row ID"] = str(scan)
-        output_record["row m/z"] = str(mz)
-        output_record["row retention time"] = str(rt)
-
-        for sample_name in sample_names:
-            output_record[sample_name + " Peak area"] = record[sample_name]
-
-        output_records.append(output_record)
-
-    output_headers = ["row ID", "row m/z", "row retention time"]
-    output_headers += [sample_name + " Peak area" for sample_name in sample_names]
-
-    output_df = pd.DataFrame(output_records)
-    output_df.to_csv(output_filename, sep=",", index=False, columns=output_headers)
-
-    return
 
 def convert_mgf(input_mgf, output_mgf):
-    # Write the output MGF file
-    with open(output_mgf, "w") as out:
-        
-        # Cleaning mgf file
-        temp_filename = "temp.mgf"
-
-        with open(temp_filename, "w") as outtemp:
-            for line in open(input_mgf):
-                if "Num Peaks" in line:
-                    continue
-
-                outtemp.write(line)
-
-        # reading from pyteomics
-        scan = 0
-        with mgf.read(temp_filename) as reader:
-            for spectrum in reader:
-                
-                scan += 1
-                out.write("BEGIN IONS\n".format(scan))
-                out.write("TITLE=SCAN={}\n".format(scan))
-                out.write("SCANS={}\n".format(scan))
-                # writing out precursor m/z
-                out.write("PEPMASS={}\n".format(spectrum["params"]["pepmass"][0]))
-
-                # Figuring out the max intensity and keeping only things above 1% base peak
-                try:
-                    max_intensity = max(spectrum["intensity array"])
-
-                    for mz, intensity in zip(spectrum["m/z array"], spectrum["intensity array"]):
-                        ratio = intensity / max_intensity
-                        if ratio > 0.01:
-                            out.write("{:.4f} {:.4f}\n".format(mz, intensity))
-                except:
-                    pass
-
-                out.write("END IONS\n\n".format(scan))
-
-            # # reading from file
-            #
+    # Some exports contain MSP-style Num Peaks lines. Remove these without
+    # creating a fixed-name temp.mgf that concurrent conversions could share.
+    with tempfile.TemporaryFile(mode="w+") as cleaned:
+        with open(input_mgf) as source:
+            for line in source:
+                if not line.lstrip().startswith("Num Peaks"):
+                    cleaned.write(line)
+        cleaned.seek(0)
+        with mgf.read(cleaned, use_index=False) as reader, open(output_mgf, "w") as output:
+            # Retain SCANS, TITLE, precursor, RT, charge, and other source metadata.
+            # Keep the existing >1% base-peak filter and four-decimal peak output.
+            mgf.write(_filtered_spectra(reader), output=output,
+                      fragment_format="{:.4f} {:.4f}", use_numpy=False,
+                      write_charges=False)
 
 
-        #for line in open(input_mgf):
-            # if "TITLE" in line:
-            #     scan += 1
-            #     out.write("TITLE=SCAN={}\n".format(scan))
-            #     out.write("SCANS={}\n".format(scan))
-            #     continue
-                
-            # if "ION" in line:
-            #     continue
-            # if "CHARGE" in line:
-            #     continue
-            # if "RTINMINUTES" in line:
-            #     continue
-            # if "Num Peaks" in line:
-            #     continue
-
-            # out.write(line)
-
-
-
-    return
-    
-
-if __name__=="__main__":
-    # there should be obly one input file
+if __name__ == "__main__":
     convert_to_feature_csv(sys.argv[1], sys.argv[2])
