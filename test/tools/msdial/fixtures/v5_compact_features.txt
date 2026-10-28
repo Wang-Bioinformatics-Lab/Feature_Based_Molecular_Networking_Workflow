@@ -1,0 +1,9 @@
+																					Class	Sample	Sample
+																					File type	Sample	Sample
+																					Injection order	Sample	Sample
+																					Batch ID	1	1
+Alignment ID	Average Rt(min)	Average Mz	Metabolite name	Adduct ion name	Post curation result	Fill %	MS/MS included	Formula	Ontology	INCHIKEY	SMILES	Comment	Isotope tracking parent ID	Isotope tracking weight number	Dot product	Reverse dot product	Fragment presence %	S/N average	Spectrum reference file name	MS1 isotopic spectrum	MS/MS spectrum	sample_A	sample_B
+32	2.839	150.12791	Unknown	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	100:1000 110:500 120:10 130:9	10	20
+0	4.25	300.12345	Unknown	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	100:1000 110:500 120:10 130:9	30	40
+55	7.617	451.0354	Unknown	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	100:1000 110:500 120:10 130:9	50	60
+99	9.0	777.0	Unknown	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	100:1000 110:500 120:10 130:9	70	80

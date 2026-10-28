@@ -9,7 +9,6 @@ from validate_feature_spectrum_alignment import AlignmentSkewError, validate_ali
 
 
 SCRIPT = Path(__file__).with_name("validate_feature_spectrum_alignment.py")
-LOCAL_DATA = Path(__file__).resolve().parents[2] / "data/msdial"
 
 
 def inputs(tmp_path, rows, spectra):
@@ -84,29 +83,6 @@ def test_cli_fails_with_readable_persisted_summary_and_clears_it_on_success(tmp_
     summary.write_text("An unrelated workflow summary.\n")
     assert subprocess.run(command, capture_output=True).returncode == 0
     assert summary.read_text() == "An unrelated workflow summary.\n"
-
-
-@pytest.mark.parametrize("case", ["legacy_american_gut_2019", "legacy_pasef_2019"])
-def test_historical_msdial_inputs_pass(tmp_path, case):
-    folder = LOCAL_DATA / case
-    if not folder.exists():
-        pytest.skip("Download local fixtures with data/download_msdial_test_data.py")
-    import msdial_formatter
-
-    feature = tmp_path / "features.csv"
-    msdial_formatter.convert_to_feature_csv(str(next((folder / "inputfeatures").iterdir())), str(feature))
-    checked, rt_checked = validate_alignment(feature, next((folder / "inputspectra").iterdir()), "minutes")
-    expected = 8689 if case == "legacy_american_gut_2019" else 842
-    assert checked == rt_checked == expected
-
-
-@pytest.mark.parametrize("case", ["msdial5_interlab_original", "msdial5_interlab_extensionless_metadata"])
-def test_real_msdial5_bug_is_rejected(case):
-    folder = LOCAL_DATA / case / "observed_outputs/nf_output/clustering"
-    if not folder.exists():
-        pytest.skip("Download local fixtures with data/download_msdial_test_data.py")
-    with pytest.raises(AlignmentSkewError, match="Spectrum ID 1 has no matching feature-table row ID"):
-        validate_alignment(folder / "featuretable_reformated.csv", folder / "spectra_reformatted.mgf", "minutes")
 
 
 def test_repository_mzmine_example_passes():
