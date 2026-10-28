@@ -14,9 +14,9 @@ https://www.nextflow.io/docs/latest/index.html
 
 The `Search Tool` option defaults to `gnps`, the established GNPS library-search
 implementation. `Fast - Rust` selects the Rust implementation used by Everything
-Bagel. For `Fast - Rust`, the workflow passes `precursor_filter` and
-`window_filter` to the search and applies each enabled filter to both query and
-library spectra. The molecular-networking branch uses the same two parameters
+Bagel. Both search tools receive `precursor_filter` and `window_filter` and apply
+each enabled filter to both query and library spectra. Both filters default to
+enabled. The molecular-networking branch uses the same two parameters
 through `filter_spectra.py`.
 
 Library matches are annotated by `bin/scripts/getGNPS_library_annotations.py`. The
