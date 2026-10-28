@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "name": "legacy_american_gut_2019",
+      "featurefindingtool": "MSDIAL",
+      "source_input_commit": "a4bd43bac68a29fcbae0e97291725ed31a993ac1",
+      "files": [
+        {
+          "role": "inputfeatures",
+          "path": "legacy_american_gut_2019/inputfeatures/MS-DIAL-GNPS_AG_test_featuretable.txt",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/MS-DIAL-GNPS_AG_test_featuretable.txt",
+          "bytes": 33120012,
+          "sha256": "d975b041deb1a3d32710b63e16a37ca9f83193feae04207c5b454a7a7df2d700"
+        },
+        {
+          "role": "inputspectra",
+          "path": "legacy_american_gut_2019/inputspectra/MS-DIAL-GNPS_AG_test_GNPS.mgf",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/MS-DIAL-GNPS_AG_test_GNPS.mgf",
+          "bytes": 33526497,
+          "sha256": "ac0c14f1500917772aae7b9625bd559da08c685d65b4520d09db6823f97763fc"
+        },
+        {
+          "role": "reference_outputs",
+          "path": "legacy_american_gut_2019/reference_outputs/MS-DIAL-GNPS_AG_test_featuretable_reference_output_file.csv",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/MS-DIAL-GNPS_AG_test_featuretable_reference_output_file.csv",
+          "bytes": 887577,
+          "sha256": "e8caca197929a12ba4952ff1f6988d39e0af49eb870d5f4053c0d4675449e286"
+        }
+      ]
+    },
+    {
+      "name": "legacy_pasef_2019",
+      "featurefindingtool": "MSDIAL",
+      "source_input_commit": "def00b8816abd123e421e2d7c3a4b5f598ff70b2",
+      "files": [
+        {
+          "role": "inputfeatures",
+          "path": "legacy_pasef_2019/inputfeatures/GnpsTable_1_20198191357_PASEF.txt",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/GnpsTable_1_20198191357_PASEF.txt",
+          "bytes": 664032,
+          "sha256": "9aafc856c1740180e0e39be3d9484fcfce666dabfae1cd6c45efaf7c25bcdd14"
+        },
+        {
+          "role": "inputspectra",
+          "path": "legacy_pasef_2019/inputspectra/GnpsMgf_1_20198191357_PASEF.mgf",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/GnpsMgf_1_20198191357_PASEF.mgf",
+          "bytes": 400623,
+          "sha256": "edc287d80d5bb099e8e4f57565f58f591dc26af3f2c4e24680498b48b8110612"
+        },
+        {
+          "role": "reference_outputs",
+          "path": "legacy_pasef_2019/reference_outputs/GnpsTable_1_20198191357_PASEF_output.csv",
+          "source_url": "https://raw.githubusercontent.com/CCMS-UCSD/GNPS_Workflows/master/feature-based-molecular-networking/test/reference_input_file_for_formatter/MS-DIAL/GnpsTable_1_20198191357_PASEF_output.csv",
+          "bytes": 199960,
+          "sha256": "d9ec3b89fd96f5df974b2686824b1ed6b997c888c129e9a79fcd0e981a218ef4"
+        }
+      ]
+    },
+    {
+      "name": "msdial5_interlab_original",
+      "featurefindingtool": "MSDIAL5",
+      "task": "dd46e5e261ff4ee5af13b8d71c99780e",
+      "files": [
+        {
+          "role": "inputfeatures",
+          "path": "msdial5_interlab_original/inputfeatures/AlignmentResult_2026_10_19_16_54_13_GNPSTable_202610191713.txt",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=inputfeatures/AlignmentResult_2026_10_19_16_54_13_GNPSTable_202610191713.txt",
+          "bytes": 13880861,
+          "sha256": "4eccb58a47940a7526b98e2153ed61b7d9dacc5818cb0c9622c164c39d6d6f44"
+        },
+        {
+          "role": "inputspectra",
+          "path": "msdial5_interlab_original/inputspectra/AlignmentResult_2026_10_19_16_54_13_GNPSSpectra_202610191713.mgf",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=inputspectra/AlignmentResult_2026_10_19_16_54_13_GNPSSpectra_202610191713.mgf",
+          "bytes": 13719280,
+          "sha256": "def2b7732cd63ee5452c47b0ec7fa76dfd511a5b65af1ed6b91ad208aa6db7c4"
+        },
+        {
+          "role": "metadata_filename",
+          "path": "msdial5_interlab_original/metadata_filename/metadata_dom_interlab_lab2.txt",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=metadata_filename/metadata_dom_interlab_lab2.txt",
+          "bytes": 812,
+          "sha256": "9e7907adf6714fb88035ee82049619024c2b34da3652c8e8ffc220388c63fd30"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_original/submission_parameters.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=submission_parameters.yaml",
+          "bytes": 1215,
+          "sha256": "124799faefc494b3435c1800481639788412c5abe76455189098436e1b8dd46d"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_original/job_parameters.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=job_parameters.yaml",
+          "bytes": 1616,
+          "sha256": "38e4bdbd9915a8ec129348f4f8aed6786c8bac4392f0345026dde58917623ec7"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_original/flow_filelinking.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=flow_filelinking.yaml",
+          "bytes": 7630,
+          "sha256": "7f5d1e2cf3bacd912cd36bf74ed279e7c48655a61c22311e413100522fca57c8"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_original/observed_outputs/nf_output/clustering/featuretable_reformated.csv",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=nf_output/clustering/featuretable_reformated.csv",
+          "bytes": 13149690,
+          "sha256": "5da2f68853d3f7053bb1beb7d61a0ec96c0780e61faa50e8814ba4a0b99b6db5"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_original/observed_outputs/nf_output/clustering/spectra_reformatted.mgf",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=nf_output/clustering/spectra_reformatted.mgf",
+          "bytes": 9325938,
+          "sha256": "2394ef91dc9694e56c5c478a97806a4ff184f49a7a549bd131988118017e5c0b"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_original/observed_outputs/nf_output/metadata/merged_metadata.tsv",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=nf_output/metadata/merged_metadata.tsv",
+          "bytes": 820,
+          "sha256": "fed9d9181e662f891599f93ec9355a80118d12c8eef6f3827598bbd69e6197e3"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_original/observed_outputs/nf_output/networking/clustersummary_with_groups.tsv",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=nf_output/networking/clustersummary_with_groups.tsv",
+          "bytes": 213010,
+          "sha256": "548ff489c8d73bc2834dec7aaf5ebbd90f442bc9cd3a072a81d1f0199b4d806d"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_original/observed_outputs/nf_output/networking/network.graphml",
+          "source_url": "https://gnps2.org/resultfile?task=dd46e5e261ff4ee5af13b8d71c99780e&file=nf_output/networking/network.graphml",
+          "bytes": 2387234,
+          "sha256": "86e6e812a39a113ea2f7bf5a73800d74620c239435b21b4d19333324c761050c"
+        }
+      ]
+    },
+    {
+      "name": "msdial5_interlab_extensionless_metadata",
+      "featurefindingtool": "MSDIAL5",
+      "task": "fbb6fbf08c8b4804a703914445d13775",
+      "files": [
+        {
+          "role": "inputfeatures",
+          "path": "msdial5_interlab_extensionless_metadata/inputfeatures/AlignmentResult_2026_10_19_16_54_13_GNPSTable_202610191713.txt",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=inputfeatures/AlignmentResult_2026_10_19_16_54_13_GNPSTable_202610191713.txt",
+          "bytes": 13880861,
+          "sha256": "4eccb58a47940a7526b98e2153ed61b7d9dacc5818cb0c9622c164c39d6d6f44"
+        },
+        {
+          "role": "inputspectra",
+          "path": "msdial5_interlab_extensionless_metadata/inputspectra/AlignmentResult_2026_10_19_16_54_13_GNPSSpectra_202610191713.mgf",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=inputspectra/AlignmentResult_2026_10_19_16_54_13_GNPSSpectra_202610191713.mgf",
+          "bytes": 13719280,
+          "sha256": "def2b7732cd63ee5452c47b0ec7fa76dfd511a5b65af1ed6b91ad208aa6db7c4"
+        },
+        {
+          "role": "metadata_filename",
+          "path": "msdial5_interlab_extensionless_metadata/metadata_filename/metadata_dom_interlab_lab2.txt",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=metadata_filename/metadata_dom_interlab_lab2.txt",
+          "bytes": 747,
+          "sha256": "41ede81f76eb392cb5a19498221b261d780d784407aff09fe2ff8c3a0ea33908"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_extensionless_metadata/submission_parameters.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=submission_parameters.yaml",
+          "bytes": 1204,
+          "sha256": "1ecb922d1ff36374d5cd7ac8e445a1e61141351221495a6961325bb787c54dc8"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_extensionless_metadata/job_parameters.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=job_parameters.yaml",
+          "bytes": 1616,
+          "sha256": "e14b6085b6a3d1d1c55320837cd7014dfd2b21d9e5c8f17585c98dfdb5109188"
+        },
+        {
+          "role": "provenance",
+          "path": "msdial5_interlab_extensionless_metadata/flow_filelinking.yaml",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=flow_filelinking.yaml",
+          "bytes": 7630,
+          "sha256": "7f5d1e2cf3bacd912cd36bf74ed279e7c48655a61c22311e413100522fca57c8"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/clustering/featuretable_reformated.csv",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/clustering/featuretable_reformated.csv",
+          "bytes": 13149690,
+          "sha256": "5da2f68853d3f7053bb1beb7d61a0ec96c0780e61faa50e8814ba4a0b99b6db5"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/clustering/spectra_reformatted.mgf",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/clustering/spectra_reformatted.mgf",
+          "bytes": 9325938,
+          "sha256": "2394ef91dc9694e56c5c478a97806a4ff184f49a7a549bd131988118017e5c0b"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/metadata/merged_metadata.tsv",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/metadata/merged_metadata.tsv",
+          "bytes": 755,
+          "sha256": "a710998ae8f4baaf02f59fbe2613ae2006ba07736eccb8371bb3f719cb1224ac"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/networking/clustersummary_with_groups.tsv",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/networking/clustersummary_with_groups.tsv",
+          "bytes": 832386,
+          "sha256": "ef0aab6b7beb7d83e7c784919d561277802ca419cf8d265c25725756ffd2c8af"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/networking/clustersummary_with_network.tsv",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/networking/clustersummary_with_network.tsv",
+          "bytes": 854095,
+          "sha256": "c204ca210e339241b49d6fead06fc02bd10fa40854130a29e0123b8d15cf5b2c"
+        },
+        {
+          "role": "observed_output_known_buggy",
+          "path": "msdial5_interlab_extensionless_metadata/observed_outputs/nf_output/networking/network.graphml",
+          "source_url": "https://gnps2.org/resultfile?task=fbb6fbf08c8b4804a703914445d13775&file=nf_output/networking/network.graphml",
+          "bytes": 2387135,
+          "sha256": "ab0d509525a7b1143c7bf4fe31ce2d7fdc68d7d7bec0c01d530adc375179f404"
+        }
+      ]
+    }
+  ]
+}

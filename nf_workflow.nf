@@ -114,6 +114,16 @@ process quantification_table_reformatted {
     specs_ms.mgf \
     embedded_metadata.tsv \
     --QUANT_FILE_NORM $params.normalization
+
+    # Gate every converted output before networking or library search starts.
+    # Write the summary directly: failed processes do not publish outputs.
+    python $TOOL_FOLDER/scripts/validate_feature_spectrum_alignment.py \
+    featuretable_reformated.csv \
+    specs_ms.mgf \
+    --featurefindingtool "$params.featurefindingtool" \
+    --feature-source "$input_features" \
+    --spectra-source "$input_spectra" \
+    --summary "${file(params.publishdir).toAbsolutePath()}/nf_output/workflow_summary.txt"
     """
 }
 
