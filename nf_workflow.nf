@@ -115,17 +115,19 @@ process quantification_table_reformatted {
     embedded_metadata.tsv \
     --QUANT_FILE_NORM $params.normalization
 
-    # Enforce only the verified MS-DIAL5 contract. Other exporters can retain
-    # padding spectra and need their own validated alignment contract.
+    # Enforce the ID/precursor contract for the validated importer paths.
+    # EB removes its upstream empty padding before this strict check.
     # Write the summary directly: failed processes do not publish outputs.
-    if [ "$params.featurefindingtool" = "MSDIAL5" ]; then
+    case "$params.featurefindingtool" in
+    MSDIAL5|MSDIAL|MZMINE|EVERYTHING_BAGEL|ASARI|MASSCUBE|OPENMS|XCMS3)
         python $TOOL_FOLDER/scripts/validate_feature_spectrum_alignment.py \
         featuretable_reformated.csv \
         specs_ms.mgf \
         --feature-source "$input_features" \
         --spectra-source "$input_spectra" \
         --summary "${file(params.publishdir).toAbsolutePath()}/nf_output/workflow_summary.txt"
-    fi
+        ;;
+    esac
     """
 }
 

@@ -1,0 +1,80 @@
+[
+  {
+    "tool": "asari",
+    "task": "da4df550cdbf4ca88de55b0266f992be",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      39,
+      45
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  },
+  {
+    "tool": "everything_bagel",
+    "task": "4168332e0fc44c5b932cb7534d0c293a",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      1,
+      3607
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  },
+  {
+    "tool": "masscube",
+    "task": "3480f5726400400b80c163b3a9a83911",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      1,
+      2
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  },
+  {
+    "tool": "mzmine",
+    "task": "28a516b5c47d42bea86b1d62a0089274",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      27,
+      23
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  },
+  {
+    "tool": "openms",
+    "task": "b5f8a9eba154470cacdeb15226c10c5d",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      1,
+      2
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  },
+  {
+    "tool": "xcms",
+    "task": "21bea936ab954787ac66d4c2f0c4a367",
+    "source_files": [
+      "nf_output/clustering/featuretable_reformated.csv",
+      "nf_output/clustering/specs_ms.mgf"
+    ],
+    "real_feature_ids": [
+      34,
+      42
+    ],
+    "note": "Local excerpts; fragment lists truncated to six peaks, NUM PEAKS adjusted. Tests check ID/precursor contract, not spectral matching."
+  }
+]
