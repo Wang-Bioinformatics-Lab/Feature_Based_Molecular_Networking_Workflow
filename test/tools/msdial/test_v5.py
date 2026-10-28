@@ -68,7 +68,7 @@ def test_existing_one_percent_fragment_filter_stays_unchanged(converted):
 
 def test_converted_outputs_pass_runtime_alignment_guard(converted):
     feature, spectra = converted
-    assert validate_alignment(feature, spectra, 'minutes') == (3, 3)
+    assert validate_alignment(feature, spectra) == 3
 
 
 def test_v5_dispatch_preserves_alignment_and_sample_values(fixture_dir, dispatch):
@@ -81,7 +81,7 @@ def test_v5_dispatch_preserves_alignment_and_sample_values(fixture_dir, dispatch
         'row ID', 'row m/z', 'row retention time',
         'sample_A Peak area', 'sample_B Peak area',
     ]
-    assert validate_alignment(feature, spectra, 'minutes') == (3, 3)
+    assert validate_alignment(feature, spectra) == 3
 
 
 @pytest.mark.parametrize('case', ['msdial5_interlab_original', 'msdial5_interlab_extensionless_metadata'])
@@ -102,7 +102,7 @@ def test_real_v5_inputs_preserve_ids_and_align_after_conversion(tmp_path, local_
         'row ID', 'row m/z', 'row retention time',
         *[c + ' Peak area' for c in source_table.columns[35:]],
     ]
-    assert validate_alignment(feature, spectra, 'minutes') == (4653, 4653)
+    assert validate_alignment(feature, spectra) == 4653
 
 
 def test_compact_v5_export_retains_existing_sample_column_support(tmp_path, fixture_dir):

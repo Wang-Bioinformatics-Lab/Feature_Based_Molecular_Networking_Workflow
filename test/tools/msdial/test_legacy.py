@@ -25,7 +25,7 @@ def test_legacy_dispatch_preserves_shared_ids_acquisition_and_mgf(fixture_dir, d
     # The legacy path intentionally copies source MGF bytes, retaining charge,
     # source RT, sparse IDs, zero, and an order different from the feature CSV.
     assert mgf_out.read_bytes() == source.read_bytes()
-    assert validate_alignment(feature_out, mgf_out, 'minutes') == (3, 3)
+    assert validate_alignment(feature_out, mgf_out) == 3
 
 
 def test_legacy_pasef_columns_do_not_become_sample_abundances(tmp_path, fixture_dir):
@@ -58,4 +58,4 @@ def test_historical_inputs_reproduce_reference_output_and_align(tmp_path, local_
         check_dtype=False, rtol=1e-10, atol=1e-8,
     )
     expected = 8689 if case == 'legacy_american_gut_2019' else 842
-    assert validate_alignment(output, next((folder / 'inputspectra').iterdir()), 'minutes') == (expected, expected)
+    assert validate_alignment(output, next((folder / 'inputspectra').iterdir())) == expected

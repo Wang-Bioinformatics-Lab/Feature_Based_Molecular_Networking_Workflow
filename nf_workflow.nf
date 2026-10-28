@@ -115,15 +115,17 @@ process quantification_table_reformatted {
     embedded_metadata.tsv \
     --QUANT_FILE_NORM $params.normalization
 
-    # Gate every converted output before networking or library search starts.
+    # Enforce only the verified MS-DIAL5 contract. Other exporters can retain
+    # padding spectra and need their own validated alignment contract.
     # Write the summary directly: failed processes do not publish outputs.
-    python $TOOL_FOLDER/scripts/validate_feature_spectrum_alignment.py \
-    featuretable_reformated.csv \
-    specs_ms.mgf \
-    --featurefindingtool "$params.featurefindingtool" \
-    --feature-source "$input_features" \
-    --spectra-source "$input_spectra" \
-    --summary "${file(params.publishdir).toAbsolutePath()}/nf_output/workflow_summary.txt"
+    if [ "$params.featurefindingtool" = "MSDIAL5" ]; then
+        python $TOOL_FOLDER/scripts/validate_feature_spectrum_alignment.py \
+        featuretable_reformated.csv \
+        specs_ms.mgf \
+        --feature-source "$input_features" \
+        --spectra-source "$input_spectra" \
+        --summary "${file(params.publishdir).toAbsolutePath()}/nf_output/workflow_summary.txt"
+    fi
     """
 }
 
@@ -198,6 +200,10 @@ process calculatePairs {
         "$params_file" \
         -ccms_INPUT_SPECTRA_MS2 $spectrum_file \
         -ccms_output_aligns ${params_file}_aligns.tsv
+
+    python $TOOL_FOLDER/scripts/spectrum_id_mapping.py \
+        "$spectrum_file" \
+        "${params_file}_aligns.tsv"
     """
 }
 

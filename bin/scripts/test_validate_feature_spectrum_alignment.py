@@ -25,48 +25,31 @@ def inputs(tmp_path, rows, spectra):
     return feature, mgf
 
 
-@pytest.mark.parametrize("feature_rt,unit,mgf_rt", [
-    (2.0, "minutes", "RTINSECONDS=132\n"),
-    (120.0, "seconds", "RTINMINUTES=2.2\n"),
-    (2.0, "minutes", "RTINMINUTES=1.8\n"),
-])
-def test_loose_tolerance_boundaries_and_rt_units(tmp_path, feature_rt, unit, mgf_rt):
-    # Out-of-order IDs, integer-valued CSV IDs, and MS1-only feature rows are valid.
-    feature, mgf = inputs(tmp_path, [(7, 300, 8), (12.0, 200, feature_rt)],
-                          [(12, 201, mgf_rt)])
-    assert validate_alignment(feature, mgf, unit) == (1, 1)
+@pytest.mark.parametrize("mz", [199, 201])
+def test_loose_precursor_tolerance_boundaries(tmp_path, mz):
+    # Out-of-order IDs, integer-valued CSV IDs, and MS1-only rows are valid.
+    feature, mgf = inputs(tmp_path, [(7, 300, 8), (12.0, 200, 2)], [(12, mz, "")])
+    assert validate_alignment(feature, mgf) == 1
 
 
-@pytest.mark.parametrize("mz,rt,reason", [
-    (201.01, "RTINMINUTES=2\n", "precursor m/z"),
-    (198.99, "RTINMINUTES=2\n", "precursor m/z"),
-    (200, "RTINSECONDS=132.6\n", "spectrum RT"),
-    (200, "RTINMINUTES=1.79\n", "spectrum RT"),
-])
-def test_same_ids_with_wrong_measurements_fail(tmp_path, mz, rt, reason):
-    feature, mgf = inputs(tmp_path, [(33, 200, 2)], [(33, mz, rt)])
-    with pytest.raises(AlignmentSkewError, match=reason):
-        validate_alignment(feature, mgf, "minutes")
-
-
-def test_missing_spectrum_rt_still_checks_precursor(tmp_path):
-    feature, mgf = inputs(tmp_path, [(33, 150.12791, 2.839)], [(33, 154.990494, "")])
+@pytest.mark.parametrize("mz", [201.01, 198.99])
+def test_same_ids_with_wrong_precursors_fail(tmp_path, mz):
+    feature, mgf = inputs(tmp_path, [(33, 200, 2)], [(33, mz, "")])
     with pytest.raises(AlignmentSkewError, match="precursor m/z"):
-        validate_alignment(feature, mgf, "minutes")
+        validate_alignment(feature, mgf)
 
 
-def test_missing_rt_and_unknown_feature_rt_units_are_allowed(tmp_path):
-    feature, mgf = inputs(tmp_path, [(33, 200, 120)], [(33, 200.9, "")])
-    assert validate_alignment(feature, mgf, "seconds") == (1, 0)
-    mgf.write_text(mgf.read_text().replace("PEPMASS=200.9", "PEPMASS=200.9 1000\nRTINMINUTES=2"))
-    assert validate_alignment(feature, mgf) == (1, 0)
+@pytest.mark.parametrize("rt", ["", "RTINSECONDS=1800\n", "RTINMINUTES=30\n"])
+def test_rt_is_not_used_to_reject_an_aligned_precursor(tmp_path, rt):
+    feature, mgf = inputs(tmp_path, [(33, 200, 2)], [(33, 200.9, rt)])
+    assert validate_alignment(feature, mgf) == 1
 
 
 def test_cli_fails_with_readable_persisted_summary_and_clears_it_on_success(tmp_path):
     feature, mgf = inputs(tmp_path, [(33, 200, 2)], [(1, 200, "")])
     summary = tmp_path / "published/nf_output/workflow_summary.txt"
     command = [sys.executable, str(SCRIPT), str(feature), str(mgf),
-               "--summary", str(summary), "--featurefindingtool", "MSDIAL5",
+               "--summary", str(summary),
                "--feature-source", "original features.txt", "--spectra-source", "original spectra.mgf"]
     result = subprocess.run(command, capture_output=True, text=True)
     assert result.returncode == 1
@@ -85,9 +68,22 @@ def test_cli_fails_with_readable_persisted_summary_and_clears_it_on_success(tmp_
     assert summary.read_text() == "An unrelated workflow summary.\n"
 
 
+def test_cli_ignores_rt_but_still_rejects_a_wrong_precursor(tmp_path):
+    feature, mgf = inputs(tmp_path, [(33, 200, 2)], [(33, 200.5, "RTINSECONDS=1800\n")])
+    summary = tmp_path / "nf_output/workflow_summary.txt"
+    command = [sys.executable, str(SCRIPT), str(feature), str(mgf), "--summary", str(summary)]
+    result = subprocess.run(command, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert not summary.exists()
+    mgf.write_text(mgf.read_text().replace("PEPMASS=200.5", "PEPMASS=201.1"))
+    result = subprocess.run(command, capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "precursor m/z" in summary.read_text()
+
+
 def test_repository_mzmine_example_passes():
     folder = Path(__file__).resolve().parents[2] / "data/mzmine2/gnps_featurefinding"
-    checked, rt_checked = validate_alignment(
-        folder / "features_quant.csv", folder / "spectra/features.mgf", "minutes"
+    checked = validate_alignment(
+        folder / "features_quant.csv", folder / "spectra/features.mgf"
     )
-    assert checked == rt_checked == 2594
+    assert checked == 2594

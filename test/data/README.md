@@ -25,10 +25,12 @@ To keep the downloads out of commits without changing shared ignore rules:
 printf '\n/data/msdial/\n' >> .git/info/exclude
 ```
 
-The runtime alignment check runs after conversion, before spectra filtering and
-networking. It compares IDs and precursor m/z with a **1 Da** absolute tolerance.
-It also compares retention times with a **0.2 minute** absolute tolerance when
-the MGF retains RT and the feature formatter's RT unit is known. It allows feature
-rows without MS/MS. It does not infer ID mappings, repair IDs, or change input
+The workflow enforces the runtime alignment check for **MSDIAL5 only**, after
+conversion and before spectra filtering and networking. Other exporters may
+include padding scans that are not represented in the feature table, so the
+same check is not yet a verified contract for those methods. The generic checker
+remains available for explicit diagnostics. It compares IDs and precursor m/z
+with a **1 Da** absolute tolerance. It does not inspect retention times.
+The checker allows feature rows without MS/MS. It does not infer ID mappings, repair IDs, or change input
 data. The failure message is written directly to `nf_output/workflow_summary.txt`
 before the process exits nonzero, so it survives a failed Nextflow process.

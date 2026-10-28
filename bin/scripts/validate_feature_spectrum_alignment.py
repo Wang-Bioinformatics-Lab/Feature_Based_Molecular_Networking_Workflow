@@ -10,13 +10,7 @@ import sys
 
 
 MZ_TOLERANCE_DA = 1.0
-RT_TOLERANCE_MIN = 0.2
 ERROR_PREFIX = "An ID alignment skew has been detected between "
-
-# These formatters have known feature-table RT units. Other formats still get
-# ID and precursor checks; guessing their RT units could reject valid inputs.
-SECONDS_TOOLS = {"OPENMS", "XCMS3", "MZTABM", "ASARI"}
-MINUTES_TOOLS = {"MSDIAL", "MSDIAL5", "PROGENESIS", "EVERYTHING_BAGEL"}
 
 
 class AlignmentSkewError(ValueError):
@@ -57,7 +51,7 @@ def read_features(path):
                 raise AlignmentSkewError("The converted feature table has an invalid ID or precursor m/z.")
             if identifier in features:
                 raise AlignmentSkewError("Feature ID {} occurs more than once.".format(identifier))
-            features[identifier] = (mz, finite_number(row.get("row retention time")))
+            features[identifier] = mz
     return features
 
 
@@ -77,22 +71,14 @@ def mgf_headers(path):
                 headers[key.strip().upper()] = value.strip()
 
 
-def feature_rt_unit(tool):
-    if tool in SECONDS_TOOLS:
-        return "seconds"
-    if tool in MINUTES_TOOLS or "MZMINE" in tool:
-        return "minutes"
-    return None
-
-
-def validate_alignment(feature_path, spectrum_path, rt_unit=None):
+def validate_alignment(feature_path, spectrum_path):
     """Check spectra by ID; feature rows without MS/MS are allowed.
 
-    Run before filter_spectra.py injects dummy scans. Missing spectrum RT is
-    allowed (e.g. current MSDIAL5 output); m/z and IDs are always checked.
+    Run before filter_spectra.py injects dummy scans. Compare precursor m/z,
+    not acquisition RT, which need not equal an aligned feature's RT center.
     """
     features = read_features(feature_path)
-    checked = rt_checked = 0
+    checked = 0
     seen = set()
     for spectrum in mgf_headers(spectrum_path):
         identifier = canonical_id(spectrum.get("SCANS", ""))
@@ -109,32 +95,16 @@ def validate_alignment(feature_path, spectrum_path, rt_unit=None):
         mz = finite_number(mz_values[0]) if mz_values else None
         if mz is None or mz <= 0:
             raise AlignmentSkewError("Spectrum ID {} has no valid precursor m/z.".format(identifier))
-        feature_mz, feature_rt = features[identifier]
+        feature_mz = features[identifier]
         if abs(mz - feature_mz) > MZ_TOLERANCE_DA + 1e-9:
             raise AlignmentSkewError(
                 "ID {}: spectrum precursor m/z {:.6f}, feature m/z {:.6f} "
                 "(allowed difference: 1 Da).".format(identifier, mz, feature_mz)
             )
-        rt = None
-        if "RTINSECONDS" in spectrum:
-            rt = finite_number(spectrum["RTINSECONDS"])
-            if rt is not None:
-                rt /= 60.0
-        elif "RTINMINUTES" in spectrum:
-            rt = finite_number(spectrum["RTINMINUTES"])
-        if rt_unit and rt is not None and feature_rt is not None:
-            if rt_unit == "seconds":
-                feature_rt /= 60.0
-            if abs(rt - feature_rt) > RT_TOLERANCE_MIN + 1e-9:
-                raise AlignmentSkewError(
-                    "ID {}: spectrum RT {:.6f} min, feature RT {:.6f} min "
-                    "(allowed difference: 0.2 min).".format(identifier, rt, feature_rt)
-                )
-            rt_checked += 1
         checked += 1
     if not checked:
         raise AlignmentSkewError("No MS/MS spectra were available to check against the feature table.")
-    return checked, rt_checked
+    return checked
 
 
 def source_name(path):
@@ -152,16 +122,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("feature_table")
     parser.add_argument("spectra")
-    parser.add_argument("--featurefindingtool", default="")
     parser.add_argument("--summary", required=True)
     parser.add_argument("--feature-source")
     parser.add_argument("--spectra-source")
     args = parser.parse_args()
     summary = Path(args.summary)
     try:
-        checked, rt_checked = validate_alignment(
-            args.feature_table, args.spectra, feature_rt_unit(args.featurefindingtool)
-        )
+        checked = validate_alignment(args.feature_table, args.spectra)
     except AlignmentSkewError as error:
         message = (
             ERROR_PREFIX + 'feature table "{}" and MS/MS spectra "{}". '
@@ -183,7 +150,7 @@ def main():
     # Do not leave this check's old failure visible after a successful rerun.
     if summary.exists() and summary.read_text(encoding="utf-8").startswith(ERROR_PREFIX):
         summary.unlink()
-    print("ID alignment check passed: {} spectra; {} RT comparisons.".format(checked, rt_checked))
+    print("ID alignment check passed: {} spectra.".format(checked))
     return 0
 
 
