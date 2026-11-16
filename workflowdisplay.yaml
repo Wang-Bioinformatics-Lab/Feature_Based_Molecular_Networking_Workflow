@@ -194,8 +194,28 @@ Views:
     viewname: section
     displaytype: section
 
+-   name: Network Browser
+    displayname: Network Browser
+    viewname: networkbrowser
+    displaytype: linkout
+    parameters:
+        baseurl: https://apps.gnps2.org/gnps2_network_browser
+        urlparam:
+            -   usi:mzdata:GNPS2:TASK-[task]-nf_output/networking/network.graphml
+            -   usi-mgf:mzdata:GNPS2:TASK-[task]-nf_output/clustering/spectra_reformatted.mgf
+
+-   name: Network Browser (Full Network w/ Singletons)
+    displayname: Network Browser (Full Network w/ Singletons)
+    viewname: networkbrowsersingletons
+    displaytype: linkout
+    parameters:
+        baseurl: https://apps.gnps2.org/gnps2_network_browser
+        urlparam:
+            -   usi:mzdata:GNPS2:TASK-[task]-nf_output/networking/network_singletons.graphml
+            -   usi-mgf:mzdata:GNPS2:TASK-[task]-nf_output/clustering/spectra_reformatted.mgf
+
 -   name: Visualize Network in Browser
-    displayname: Visualize Full Network in Browser
+    displayname: Visualize Full Network in Browser (Legacy)
     viewname: visualizefullnetwork
     displaytype: linkout
     parameters:
@@ -205,7 +225,7 @@ Views:
             -   usi-mgf:mzdata:GNPS2:TASK-[task]-nf_output/clustering/spectra_reformatted.mgf
 
 -   name: Visualize Network w/ Singletons in Browser
-    displayname: Visualize Full Network w/ Singletons in Browser
+    displayname: Visualize Full Network w/ Singletons in Browser (Legacy)
     viewname: visualizefullsingletonnetwork
     displaytype: linkout
     parameters:
